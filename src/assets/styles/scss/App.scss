@@ -1,4 +1,22 @@
 /* The following line can be included in a src/App.scss */
-
-
 @import "custom";
+
+.has-error {
+  border: 2px solid $danger;
+}
+
+.error-message {
+  color: $danger;
+  padding: 0.5rem 0.2rem;
+  height: 1rem;
+  position: absolute;
+  font-size: 0.8rem;
+}
+
+// .error-message {
+//   color: map-get($theme-colors,"info");
+//   padding: 0.5rem 0.2rem;
+//   height: 1rem;
+//   position: absolute;
+//   font-size: 0.8rem;
+// }

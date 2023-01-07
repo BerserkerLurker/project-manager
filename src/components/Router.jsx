@@ -15,6 +15,7 @@ function AuthenticatedRoute() {
     if (!user) {
       return navigate("/login", { replace: true });
     }
+    return navigate("/", { replace: true });
   }, [user]);
   return <Home />;
 }
