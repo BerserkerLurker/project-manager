@@ -37,7 +37,6 @@ export function AuthProvider(children) {
       .login({ email, password })
       .then((user) => {
         setUser(user);
-        navigate("/");
       })
       .catch((error) => setError(error))
       .finally(() => setLoading(false));
@@ -50,7 +49,6 @@ export function AuthProvider(children) {
       .signUp({ email, name, password })
       .then((user) => {
         setUser(user);
-        navigate("/");
       })
       .catch((error) => setError(error))
       .finally(() => setLoading(false));
@@ -74,11 +72,17 @@ export function AuthProvider(children) {
 
   return (
     <AuthContext.Provider value={memoedValue}>
-      {children && (loadingInitial ? "Loading..." : children.children)}
+      {toArray(children.children)}
     </AuthContext.Provider>
   );
 }
 
 export default function useAuth() {
   return useContext(AuthContext);
+}
+
+function toArray(items) {
+  if (!items) return [];
+  if (Array.isArray(items)) return items;
+  return [items];
 }
