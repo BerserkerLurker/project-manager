@@ -72,7 +72,7 @@ export function AuthProvider(children) {
 
   return (
     <AuthContext.Provider value={memoedValue}>
-      {toArray(children.children)}
+      {loadingInitial ? "loading" : toArray(children.children)}
     </AuthContext.Provider>
   );
 }
