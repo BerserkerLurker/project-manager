@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "./components/Navbar";
+import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Router from "./components/Router";
 import { BrowserRouter } from "react-router-dom";
@@ -8,11 +8,13 @@ import { AuthProvider } from "./hooks/useAuth";
 function App() {
   return (
     <BrowserRouter>
+      <div className="d-flex flex-column min-vh-100">
       <AuthProvider>
-        <Navbar/>
+          <Header />
         <Router />
       </AuthProvider>
       <Footer />
+      </div>
     </BrowserRouter>
   );
 }
