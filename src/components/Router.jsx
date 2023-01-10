@@ -4,9 +4,13 @@ import useAuth from "../hooks/useAuth";
 import Login from "../pages/authentication/Login";
 import SignUp from "../pages/authentication/SignUp";
 import Dashboard from "../pages/dashboard/Dashboard";
-import Profile from "../pages/dashboard/Profile";
+import Profile from "../pages/profile/Profile";
 import NoMatch from "../pages/error/NoMatch";
 import Home from "../pages/home/Home";
+import Messages from "../pages/dashboard/Messages";
+import Calendar from "../pages/dashboard/Calendar";
+import Boards from "../pages/dashboard/Boards";
+import Project from "../pages/dashboard/Project";
 
 function AuthenticatedRoute() {
   const navigate = useNavigate();
@@ -24,10 +28,17 @@ function Router() {
   return (
     <Routes>
       <Route path="/" element={<AuthenticatedRoute />}>
-        <Route index element={<Dashboard />} />
-        <Route exact path="/profile" element={<Profile />} />
-        <Route exact path="/login" element={<Login />} />
-        <Route exact path="/signup" element={<SignUp />} />
+        <Route path="/" element={<Dashboard />}>
+          <Route path="project/:id" element={<Project />} />
+          <Route path="boards" element={<Boards />} />
+          <Route path="calendar" element={<Calendar />} />
+          <Route path="tasks" element={<div>hello</div>} />
+          <Route path="messages" element={<Messages />} />
+          <Route path="*" element={<NoMatch />} />
+        </Route>
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
       </Route>
       <Route path="*" element={<NoMatch />} />
     </Routes>
