@@ -1,7 +1,20 @@
 import React from "react";
-import { Container, Image, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { Intersect } from "react-bootstrap-icons";
-import { Link, useLocation } from "react-router-dom";
+import {
+  Container,
+  Image,
+  Nav,
+  Navbar,
+  NavDropdown,
+  NavItem,
+} from "react-bootstrap";
+import {
+  DoorOpenFill,
+  GearFill,
+  Intersect,
+  LayoutTextSidebar,
+  PersonFill,
+} from "react-bootstrap-icons";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 function Header() {
@@ -12,7 +25,7 @@ function Header() {
   return (
     <header>
       <Navbar bg="light" expand="lg" className="sticky-top">
-        <Container>
+        <Container fluid className="mx-5">
           <Navbar.Brand
             as={Link}
             to="/"
@@ -27,15 +40,22 @@ function Header() {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto align-items-baseline">
+            <Nav
+              className="ms-auto align-items-baseline"
+              activeKey={location.pathname}
+            >
               {!user ? (
                 <>
-                  <Nav.Link as={Link} to="/login">
+                  <NavItem>
+                    <Nav.Link as={NavLink} to="/login">
                     Login
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/signup">
+                  </NavItem>
+                  <NavItem>
+                    <Nav.Link as={NavLink} to="/signup">
                     Signup
                   </Nav.Link>
+                  </NavItem>
                 </>
               ) : (
                 <NavDropdown
@@ -52,24 +72,28 @@ function Header() {
                   id="basic-nav-dropdown"
                 >
                   {!(location.pathname === "/") && (
-                    <NavDropdown.Item as={Link} to="/">
-                      Dashboard
+                    <NavDropdown.Item as={NavLink} to="/">
+                      <LayoutTextSidebar />
+                      <span>&nbsp;Dashboard</span>
                     </NavDropdown.Item>
                   )}
 
                   {!(location.pathname === "/profile") && (
-                    <NavDropdown.Item as={Link} to="/profile">
-                      Profile
+                    <NavDropdown.Item as={NavLink} to="/profile">
+                      <PersonFill />
+                      <span>&nbsp;Profile</span>
                     </NavDropdown.Item>
                   )}
                   {!(location.pathname === "/settings") && (
-                    <NavDropdown.Item as={Link} to="/settings">
-                      Settings
+                    <NavDropdown.Item as={NavLink} to="/settings">
+                      <GearFill />
+                      <span>&nbsp;Settings</span>
                     </NavDropdown.Item>
                   )}
                   <NavDropdown.Divider />
                   <NavDropdown.Item onClick={() => logout()}>
-                    Logout
+                    <DoorOpenFill />
+                    <span>&nbsp;Logout</span>
                   </NavDropdown.Item>
                 </NavDropdown>
               )}

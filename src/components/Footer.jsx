@@ -4,10 +4,8 @@ import { Link } from "react-router-dom";
 
 function Footer() {
   return (
-    //TODO - React Bootstrap
-
-    <Container className="mt-auto">
-      <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-2 border-top">
+    <Container className="mt-auto border-top bg-light" fluid>
+      <footer className="d-flex flex-wrap justify-content-between align-items-center py-2 py-lg-3 mx-5 my-1 my-lg-2">
         <p className="col-md-4 mb-0 text-muted">Project Manager</p>
 
         <Link
