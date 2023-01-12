@@ -6,10 +6,11 @@
 }
 
 .error-message {
+  display: block;
   color: $danger;
-  padding: 0.5rem 0.2rem;
-  height: 1rem;
-  position: absolute;
+  padding: 0.2rem 0.2rem;
+  // height: 1rem;
+  // position: absolute;
   font-size: 0.8rem;
 }
 
