@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import * as fakesessionsApi from "../api/fakesessions";
-import * as fakeusersApi from "../api/fakeusers";
+import * as authApi from "../api/auth";
 const AuthContext = createContext({});
 
 export function AuthProvider(children) {
@@ -19,23 +18,22 @@ export function AuthProvider(children) {
   }, [location.pathname]);
 
   useEffect(() => {
-    fakeusersApi
-      .getCurrentUser()
-      .then((user) => {
-        setUser(user);
-      })
-      .catch((_error) => {
-        console.log(_error);
-      })
-      .finally(() => setLoadingInitial(false));
+    const savedProfile = localStorage.getItem("userProfile");
+    if (savedProfile) {
+      setUser(JSON.parse(savedProfile));
+    } else {
+      navigate("login");
+    }
+    setLoadingInitial(false);
   }, []);
 
   function login(email, password) {
     setLoading(true);
 
-    fakesessionsApi
+    authApi
       .login({ email, password })
       .then((user) => {
+        localStorage.setItem("userProfile", JSON.stringify(user));
         setUser(user);
       })
       .catch((error) => setError(error))
@@ -45,9 +43,10 @@ export function AuthProvider(children) {
   function signUp(email, name, password) {
     setLoading(true);
 
-    fakeusersApi
+    authApi
       .signUp({ email, name, password })
       .then((user) => {
+        localStorage.setItem("userProfile", JSON.stringify(user));
         setUser(user);
       })
       .catch((error) => setError(error))
@@ -55,7 +54,10 @@ export function AuthProvider(children) {
   }
 
   function logout() {
-    fakesessionsApi.logout().then(() => setUser(undefined));
+    authApi.logout().then(() => {
+      setUser(undefined);
+      localStorage.removeItem("userProfile");
+    });
   }
 
   const memoedValue = useMemo(
