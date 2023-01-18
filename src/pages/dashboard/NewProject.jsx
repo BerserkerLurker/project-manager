@@ -2,8 +2,11 @@ import { Formik } from "formik";
 import React from "react";
 import { Button, Form } from "react-bootstrap";
 import * as Yup from "yup";
+import useApi from "../../hooks/useApi";
 
 function NewProject() {
+  // @ts-ignore
+  const { createProject } = useApi();
   function handleOnKeyDown(keyEvent) {
     if (keyEvent.key === "Enter") {
       keyEvent.preventDefault();
@@ -29,10 +32,10 @@ function NewProject() {
         initialValues={{ name: "", description: "", status: "", dueDate: "" }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting }) => {
-          console.log(values, new Date(values.dueDate).toISOString());
-          setTimeout(() => {
-            setSubmitting(false);
-          }, 1000);
+          createProject({
+            ...values,
+            dueDate: new Date(values.dueDate).toISOString(),
+          }).then(() => setSubmitting(false)); 
         }}
       >
         {({

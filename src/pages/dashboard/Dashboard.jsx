@@ -1,10 +1,14 @@
 import React from "react";
-import { Container } from "react-bootstrap";
+import { Container, ListGroup } from "react-bootstrap";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import useApi from "../../hooks/useApi";
 import SideNav from "./SideNav";
 
 function Dashboard() {
   const pathname = useLocation().pathname;
+  // @ts-ignore
+  const { projectsList: list } = useApi();
+
   return (
     <Container fluid>
       <div className="row row-cols-3 row-cols-lg-4 h-100">
@@ -56,6 +60,18 @@ function Dashboard() {
             </ol>
           </nav>
 
+          <ListGroup as="ol" variant="flush">
+            {location.pathname === "/" &&
+              list.map((project, index) => {
+                return (
+                  <ListGroup.Item as="li" key={index}>
+                    <Link to={`/project/${project.projectId}`}>
+                      {project.projectName}
+                    </Link>
+                  </ListGroup.Item>
+                );
+              })}
+          </ListGroup>
           <Outlet />
         </div>
       </div>
