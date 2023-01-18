@@ -3,4 +3,5 @@ export const loginUri = "/auth/login";
 export const signUpUri = "/auth/register";
 export const refreshUri = "/auth/refresh"
 export const logoutUri = "/auth/logout"
+export const projectsUri = "/projects";
 globalThis.accessToken = "";

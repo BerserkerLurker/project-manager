@@ -21,7 +21,7 @@ jwtInterceptor.interceptors.response.use(
         error.config.headers[
           "Authorization"
         ] = `Bearer ${globalThis.accessToken}`;
-        console.log(error.config);
+        // console.log(error.config);
         return axios(error.config);
       } catch (err) {
         return Promise.reject(err);
