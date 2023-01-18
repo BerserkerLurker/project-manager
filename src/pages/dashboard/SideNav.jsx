@@ -9,10 +9,26 @@ import {
 } from "react-bootstrap-icons";
 import { NavLink, useLocation } from "react-router-dom";
 import NavSubMenu from "../../components/NavSubMenu";
+import useApi from "../../hooks/useApi";
 
 function SideNav() {
+  // @ts-ignore
+  let { projectsList } = useApi();
   const location = useLocation();
-  console.log(location.pathname);
+
+  const SidebarData = [
+    {
+      title: "Projects",
+      path: "",
+      icon: <Stack />,
+      subNav: projectsList.map((subItem) => ({
+        title: subItem.projectName,
+        path: subItem.projectId,
+        icon: "",
+      })),
+    },
+  ];
+
   return (
     <Container>
       <Nav
@@ -56,30 +72,5 @@ function SideNav() {
     </Container>
   );
 }
-const SidebarData = [
-  {
-    title: "Projects",
-    path: "",
-    icon: <Stack />,
 
-    // from api
-    subNav: [
-      {
-        title: "Project1",
-        path: "/project/1",
-        icon: "",
-      },
-      {
-        title: "Project2",
-        path: "/project/2",
-        icon: "",
-      },
-      {
-        title: "Project3",
-        path: "/project/3",
-        icon: "",
-      },
-    ],
-  },
-];
 export default SideNav;

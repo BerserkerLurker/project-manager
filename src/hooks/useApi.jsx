@@ -21,7 +21,7 @@ export function ApiProvider(children) {
   const [projectsList, setProjectsList] = useState([]);
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
-  const [loadingInitial, setLoadingInitial] = useState(false);
+  const [loadingInitial, setLoadingInitial] = useState(true);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,6 +40,8 @@ export function ApiProvider(children) {
         })
         .catch((error) => setError(error))
         .finally(() => setLoadingInitial(false));
+    } else {
+      setLoadingInitial(false);
     }
   }, [user]);
 

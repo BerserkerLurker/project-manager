@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Nav } from "react-bootstrap";
 import { ChevronDown, ChevronUp, PlusCircle } from "react-bootstrap-icons";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 function NavSubMenu({ item }) {
+  const location = useLocation();
+
   const [subNav, setSubNav] = useState(false);
   const showSubNav = () => setSubNav(!subNav);
+  useEffect(() => {
+    if (location.pathname.includes("project")) {
+      setSubNav(true);
+    }
+  }, [location.pathname]);
   const handleClick = (e) => {
     if (item.subNav) {
       showSubNav();
@@ -32,17 +39,17 @@ function NavSubMenu({ item }) {
 
       {subNav &&
         (() => {
-          const subNavTab = item.subNav.map((item, index) => {
+          const subNavTab = item.subNav.map((subItem, index) => {
             return (
               <Nav.Item key={"sm-" + index}>
               <Nav.Link
                   className="ms-2 border"
                 as={NavLink}
-                to={item.path}
+                  to={`project/${subItem.path}`}
                   key={"sm-" + index}
               >
-                {item.icon}
-                <span>&nbsp;{item.title}</span>
+                  {subItem.icon}
+                  <span>&nbsp;{subItem.title}</span>
               </Nav.Link>
               </Nav.Item>
             );

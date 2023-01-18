@@ -2,7 +2,6 @@ import { Formik } from "formik";
 import React from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import * as Yup from "yup";
-import { signUp } from "../../api/fakeusers";
 import useAuth from "../../hooks/useAuth";
 
 const passwordRegExp =
@@ -23,6 +22,7 @@ const validationSchema = Yup.object().shape({
 });
 
 function SignUp() {
+  // @ts-ignore
   const { error, loading, signUp } = useAuth();
   return (
     <div>

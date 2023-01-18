@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import Login from "../pages/authentication/Login";
 import SignUp from "../pages/authentication/SignUp";
@@ -15,12 +15,15 @@ import NewProject from "../pages/dashboard/NewProject";
 
 function AuthenticatedRoute() {
   const navigate = useNavigate();
+  const location = useLocation();
+  // @ts-ignore
   const { user } = useAuth();
+
   useEffect(() => {
     if (!user) {
       return navigate("/login", { replace: true });
     }
-    return navigate("/", { replace: true });
+    return navigate(location.pathname, { replace: true });
   }, [user]);
   return <Home />;
 }
