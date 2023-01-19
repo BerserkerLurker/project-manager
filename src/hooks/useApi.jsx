@@ -92,7 +92,7 @@ export function ApiProvider(children) {
     setLoading(true);
 
     return projectsApi
-      .updateProject({ id: params.id, name: params.name })
+      .updateProject(params)
       .then((project) => {
         console.log("api res: " + JSON.stringify(project));
         console.log(

@@ -1,12 +1,21 @@
-import { useState } from "react";
-import { Container, Image, Nav, Row, Tab, Table } from "react-bootstrap";
+import { useRef, useState } from "react";
+import {
+  Container,
+  Image,
+  Nav,
+  Row,
+  Tab,
+  Table,
+} from "react-bootstrap";
 import { CheckCircle, PencilSquare, Plus, Trash } from "react-bootstrap-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
+import EditModal from "../../components/EditModal";
 import InfoToast from "../../components/InfoToast";
 import useApi from "../../hooks/useApi";
 // name, desc, isDone, status, dueDate, createdAt, owner, participants, tasks and actions edit, delete ...
 function Project() {
+  const ref = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
   // @ts-ignore
@@ -102,6 +111,7 @@ function Project() {
           handler: deleteProjectHandler,
         }}
       />
+      <EditModal ref={ref} title={`Edit ${p[pId].projectName}`} data={p[pId]} />
       <div className="d-flex justify-content-between align-items-baseline">
         <div>
           <h1 className="display-4 d-inline-block">
