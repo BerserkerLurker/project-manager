@@ -23,8 +23,8 @@ function Header() {
   const location = useLocation();
 
   return (
-    <header>
-      <Navbar bg="light" expand="lg" className="sticky-top">
+    <header className="sticky-lg-top bg-light h-auto" style={{ height: "100px" }}>
+      <Navbar  bg="light" expand="lg">
         <Container fluid className="mx-5">
           <Navbar.Brand
             as={Link}

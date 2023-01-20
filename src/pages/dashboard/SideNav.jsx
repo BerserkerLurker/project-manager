@@ -30,7 +30,7 @@ function SideNav() {
   ];
 
   return (
-    <Container>
+    <Container className="sticky-top" style={{top: "100px"}}>
       <Nav
         activeKey={location.pathname}
         className="d-flex flex-column gap-2 nav-pills"
