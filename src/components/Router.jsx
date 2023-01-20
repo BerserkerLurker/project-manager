@@ -12,6 +12,7 @@ import Calendar from "../pages/dashboard/Calendar";
 import Boards from "../pages/dashboard/Boards";
 import Project from "../pages/dashboard/Project";
 import NewProject from "../pages/dashboard/NewProject";
+import Tasks from "../pages/dashboard/Tasks";
 
 function AuthenticatedRoute() {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ function Router() {
           <Route path="newproject" element={<NewProject />} />
           <Route path="boards" element={<Boards />} />
           <Route path="calendar" element={<Calendar />} />
-          <Route path="tasks" element={<div>hello</div>} />
+          <Route path="tasks" element={<Tasks />} />
           <Route path="messages" element={<Messages />} />
           <Route path="*" element={<NoMatch />} />
         </Route>
