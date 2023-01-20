@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as projectsApi from "../api/projects";
+import * as tasksApi from "../api/tasks";
 import useAuth from "./useAuth";
 
 const ApiContext = createContext({});
@@ -19,6 +20,7 @@ export function ApiProvider(children) {
   // @ts-ignore
   const { user } = useAuth();
   const [projectsList, setProjectsList] = useState([]);
+  const [tasksList, setTasksList] = useState([]);
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
   const [loadingInitial, setLoadingInitial] = useState(true);
@@ -37,6 +39,14 @@ export function ApiProvider(children) {
         .getAllProjects()
         .then((projects) => {
           setProjectsList(projects);
+        })
+        .catch((error) => setError(error))
+        .finally(() => setLoadingInitial(false));
+
+      tasksApi
+        .getAllTasks()
+        .then((tasks) => {
+          setTasksList(tasks);
         })
         .catch((error) => setError(error))
         .finally(() => setLoadingInitial(false));
@@ -136,9 +146,61 @@ export function ApiProvider(children) {
       .finally(() => setLoading(false));
   }
 
+  function getAllTasks() {
+    setLoading(true);
+
+    tasksApi
+      .getAllTasks()
+      .then((tasks) => {
+        setTasksList(tasks);
+      })
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false));
+  }
+
+  function createTask(params) {
+    setLoading(true);
+
+    return tasksApi
+      .createTask(params)
+      .then((task) => {
+        console.log("api res: " + JSON.stringify(task));
+
+        const updatedData = [...tasksList];
+        updatedData.push(task);
+
+        setTasksList(updatedData);
+      })
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false));
+  }
+
+  function updateTask(params) {
+    setLoading(true);
+
+    return tasksApi
+      .updateTask(params)
+      .then((task) => {
+        console.log("api res: " + JSON.stringify(task));
+        console.log(
+          "local val: " +
+            JSON.stringify(
+              tasksList[tasksList.findIndex((o) => o.taskId === task.taskId)]
+            )
+        );
+        const updatedData = [...tasksList];
+        updatedData[updatedData.findIndex((o) => o.taskId === task.taskId)] =
+          task;
+        setTasksList(updatedData);
+      })
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false));
+  }
+
   const memoedValue = useMemo(
     () => ({
       projectsList,
+      tasksList,
       loading,
       error,
       getAllProjects,
@@ -146,8 +208,11 @@ export function ApiProvider(children) {
       createProject,
       updateProject,
       deleteProject,
+      getAllTasks,
+      createTask,
+      updateTask,
     }),
-    [projectsList, loading, error]
+    [projectsList, tasksList, loading, error]
   );
   return (
     <ApiContext.Provider value={memoedValue}>

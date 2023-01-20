@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Container,
   Image,
@@ -6,6 +6,7 @@ import {
   Row,
   Tab,
   Table,
+  ToastContainer,
 } from "react-bootstrap";
 import { CheckCircle, PencilSquare, Plus, Trash } from "react-bootstrap-icons";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -18,11 +19,26 @@ function Project() {
   const ref = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const {
   // @ts-ignore
-  const { projectsList: p, updateProject, deleteProject } = useApi();
-  const pId = p.findIndex(
-    (o) => o.projectId === location.pathname.split("/").at(-1)
-  );
+    projectsList: p,
+    // @ts-ignore
+    tasksList: t,
+    // @ts-ignore
+    updateProject,
+    // @ts-ignore
+    deleteProject,
+    // @ts-ignore
+    updateTask,
+  } = useApi();
+
+  const pathId = location.pathname.split("/").at(-1);
+  const pId = p.findIndex((o) => o.projectId === pathId);
+
+  const [prjTasks, setPrjTasks] = useState([]);
+  useEffect(() => {
+    setPrjTasks(t.filter((task) => task.projectId === pathId));
+  }, [pathId, t]);
 
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -98,11 +114,25 @@ function Project() {
       });
   };
 
+  const handleTaskCheck = (isdone, taskId, taskName) => {
+    updateTask({ id: taskId, isDone: !isdone }).then(() => {
+      settoastData({
+        bgColor: "success",
+        type: "done",
+        title: taskName,
+        msg: !isdone ? "done!!" : "updated.",
+      });
+      setShowToast(true);
+    });
+  };
+
   return (
     <Container>
       {/* // TODO - figure out how to show delete toast in dashboard after navigate
       on successful delete */}
+      <ToastContainer className="p-3" position={"top-end"}>
       {infoToast()}
+      </ToastContainer>
       <ConfirmDeleteModal
         show={showConfirmDeleteModal}
         onHide={() => setShowConfirmDeleteModal(false)}
@@ -127,10 +157,7 @@ function Project() {
             color={"green"}
             className="me-4"
             style={{ cursor: "pointer" }}
-            onClick={() => {
-              console.log("edit");
-              editProjectHandler();
-            }}
+            onClick={() => ref.current.handleShow()}
           />
           <Trash
             size={24}
@@ -253,77 +280,72 @@ function Project() {
             </Tab.Pane>
 
             <Tab.Pane className="ms-3 mt-3" eventKey="tasks">
-              <Table responsive className="table-hover">
+              {!prjTasks.length && (
+                <span>
+                  You have no pending tasks for project {p[pId].projectName}.
+                </span>
+              )}
+              <Table
+                responsive
+                className={prjTasks.length ? "table-hover" : "d-none"}
+              >
                 <thead className="table-light">
                   <tr>
                     <th></th>
                     <th>Task Name</th>
-                    <th>Assignee(s)</th>
-                    <th>Due Date</th>
+                    <th>Description</th>
                     <th>Status</th>
+                    <th>Priority</th>
+                    <th>Due Date</th>
+                    <th>Created At</th>
+                    <th>Assignee(s)</th>
                   </tr>
                 </thead>
                 <tbody className="table-group-divider">
-                  <tr>
+                  {prjTasks.map((task) => {
+                    return (
+                      <tr key={task.taskId}>
                     <th>
                       <CheckCircle
                         style={{ cursor: "pointer" }}
                         size={24}
-                        color={"gray"}
+                            color={task.isDone ? "green" : "gray"}
                         onClick={() => {
-                          console.log("clicked check mark");
+                              handleTaskCheck(
+                                task.isDone,
+                                task.taskId,
+                                task.taskName
+                              );
                         }}
                       />{" "}
                     </th>
-                    {Array.from({ length: 4 }).map((_, index) => (
-                      <td key={index}>Table cell {index}</td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <th>
-                      <CheckCircle
-                        style={{ cursor: "pointer" }}
-                        size={24}
-                        color={"gray"}
-                        onClick={() => {
-                          console.log("clicked check mark");
-                        }}
-                      />{" "}
-                    </th>
-                    {Array.from({ length: 4 }).map((_, index) => (
-                      <td key={index}>Table cell {index}</td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <th>
-                      <CheckCircle
-                        style={{ cursor: "pointer" }}
-                        size={24}
-                        color={"gray"}
-                        onClick={() => {
-                          console.log("clicked check mark");
-                        }}
-                      />
-                    </th>
-                    {Array.from({ length: 3 }).map((_, index) => (
-                      <td key={index}>Table cell {index}</td>
-                    ))}
-                    <td>
-                      <div className="team">
+                        <td>{task.taskName}</td>
+                        <td
+                          className="text-truncate"
+                          style={{ maxWidth: "15ch" }}
+                        >
+                          {task.description}
+                        </td>
+                        <td>{task.status}</td>
+                        <td>{task.priority}</td>
+                        <td>{new Date(task.dueDate).toLocaleString()}</td>
+                        <td>{new Date(task.createdAt).toLocaleString()}</td>
+                        <td className="d-flex">
+                          <div className="teamstatic">
                         <Image
                           className="rounded-circle profile-img border border-secondary"
                           src="https://picsum.photos/60"
                           alt="user pic"
                         />
                       </div>
-                      <div className="team">
+                          <div className="teamstatic">
                         <Image
                           className="rounded-circle profile-img border border-secondary"
                           src="https://picsum.photos/60"
                           alt="user pic"
                         />
                       </div>
-                      <div className="team">
+                          <div className="teamstatic">
                         <Image
                           className="rounded-circle profile-img border border-secondary"
                           src="https://picsum.photos/60"
@@ -332,6 +354,8 @@ function Project() {
                       </div>
                     </td>
                   </tr>
+                    );
+                  })}
                 </tbody>
               </Table>
             </Tab.Pane>
