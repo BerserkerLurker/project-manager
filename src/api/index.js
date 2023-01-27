@@ -1,9 +1,10 @@
 export const url = "http://localhost:5000/api/v1";
 export const loginUri = "/auth/login";
 export const signUpUri = "/auth/register";
-export const refreshUri = "/auth/refresh"
-export const logoutUri = "/auth/logout"
+export const refreshUri = "/auth/refresh";
+export const logoutUri = "/auth/logout";
 export const projectsUri = "/projects";
 export const tasksUri = "/tasks";
 export const rolesUri = "/roles";
+export const teamsUri = "/teams";
 globalThis.accessToken = "";
