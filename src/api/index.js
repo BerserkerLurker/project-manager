@@ -5,4 +5,5 @@ export const refreshUri = "/auth/refresh"
 export const logoutUri = "/auth/logout"
 export const projectsUri = "/projects";
 export const tasksUri = "/tasks";
+export const rolesUri = "/roles";
 globalThis.accessToken = "";
