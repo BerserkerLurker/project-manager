@@ -13,6 +13,7 @@ import Boards from "../pages/dashboard/Boards";
 import Project from "../pages/dashboard/Project";
 import NewProject from "../pages/dashboard/NewProject";
 import Tasks from "../pages/dashboard/Tasks";
+import Teams from "../pages/dashboard/Teams";
 
 function AuthenticatedRoute() {
   const navigate = useNavigate();
@@ -22,10 +23,14 @@ function AuthenticatedRoute() {
 
   useEffect(() => {
     if (!user) {
+      if (location.pathname === "/signup") {
+        return navigate("/signup", { replace: true });
+      } else {
       return navigate("/login", { replace: true });
     }
+    }
     return navigate(location.pathname, { replace: true });
-  }, [user]);
+  }, [user, location.pathname]);
   return <Home />;
 }
 
@@ -40,6 +45,7 @@ function Router() {
           <Route path="calendar" element={<Calendar />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="messages" element={<Messages />} />
+          <Route path="teams" element={<Teams />} />
           <Route path="*" element={<NoMatch />} />
         </Route>
         <Route path="/profile" element={<Profile />} />
