@@ -19,7 +19,7 @@ export function AuthProvider(children) {
 
   useEffect(() => {
     const savedProfile = localStorage.getItem("userProfile");
-    if (savedProfile) {
+    if (savedProfile !== "undefined") {
       setUser(JSON.parse(savedProfile));
     } else {
       navigate("login");
@@ -35,6 +35,7 @@ export function AuthProvider(children) {
       .then((user) => {
         localStorage.setItem("userProfile", JSON.stringify(user));
         setUser(user);
+        navigate("/", { replace: true });
       })
       .catch((error) => setError(error))
       .finally(() => setLoading(false));
@@ -48,6 +49,7 @@ export function AuthProvider(children) {
       .then((user) => {
         localStorage.setItem("userProfile", JSON.stringify(user));
         setUser(user);
+        navigate("/", { replace: true });
       })
       .catch((error) => setError(error))
       .finally(() => setLoading(false));
@@ -57,6 +59,25 @@ export function AuthProvider(children) {
     authApi.logout().then(() => {
       setUser(undefined);
       localStorage.removeItem("userProfile");
+      navigate("login", { replace: true });
+    });
+  }
+
+  function updateUser(params) {
+    setLoading(true);
+
+    authApi
+      .updateUser(params)
+      .then((user) => {
+        localStorage.setItem("userProfile", JSON.stringify(user));
+        setUser(user);
+        navigate("/profile", { replace: true });
+      })
+      .catch((error) => setError(error))
+      .finally(() => {
+        setTimeout(() => {
+          setLoading(false);
+        }, 2000);
     });
   }
 
@@ -68,6 +89,7 @@ export function AuthProvider(children) {
       login,
       signUp,
       logout,
+      updateUser,
     }),
     [user, loading, error]
   );
