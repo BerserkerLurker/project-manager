@@ -25,20 +25,32 @@ function Project() {
     // @ts-ignore
     tasksList: t,
     // @ts-ignore
+    loadingInitial,
+    // @ts-ignore
     updateProject,
     // @ts-ignore
     deleteProject,
     // @ts-ignore
     updateTask,
+    // @ts-ignore
+    projectsMembersObj,
   } = useApi();
 
   const pathId = location.pathname.split("/").at(-1);
   const pId = p.findIndex((o) => o.projectId === pathId);
 
   const [prjTasks, setPrjTasks] = useState([]);
+  const [prjMembers, setPrjMembers] = useState([]);
+
   useEffect(() => {
     setPrjTasks(t.filter((task) => task.projectId === pathId));
   }, [pathId, t]);
+
+  useEffect(() => {
+    setPrjMembers(projectsMembersObj[pathId]);
+  }, [pathId, projectsMembersObj]);
+
+  const projectOwner = prjMembers?.find((m) => m.isOwner);
 
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -130,6 +142,8 @@ function Project() {
     <Container>
       {/* // TODO - figure out how to show delete toast in dashboard after navigate
       on successful delete */}
+      {!loadingInitial && (
+        <>
       <ToastContainer className="p-3" position={"top-end"}>
       {infoToast()}
       </ToastContainer>
@@ -141,7 +155,11 @@ function Project() {
           handler: deleteProjectHandler,
         }}
       />
-      <EditModal ref={ref} title={`Edit ${p[pId].projectName}`} data={p[pId]} />
+          <EditModal
+            ref={ref}
+            title={`Edit ${p[pId].projectName}`}
+            data={p[pId]}
+          />
       <div className="d-flex justify-content-between align-items-baseline">
         <div>
           <h1 className="display-4 d-inline-block">
@@ -201,29 +219,17 @@ function Project() {
                   <div className="mb-3">
                     <h3>Team:</h3>
 
-                    {/* TODO - List project members */}
                     <div className="d-flex align-content-center">
-                      <div className="team">
-                        <Image
-                          className="rounded-circle profile-img border border-secondary"
-                          src="https://picsum.photos/80"
-                          alt="user pic"
-                        />
-                      </div>
-                      <div className="team">
-                        <Image
-                          className="rounded-circle profile-img border border-secondary"
-                          src="https://picsum.photos/100"
-                          alt="user pic"
-                        />
-                      </div>
-                      <div className="team">
-                        <Image
-                          className="rounded-circle profile-img border border-secondary"
-                          src="https://avatars.dicebear.com/api/adventurer/1235469874212.svg"
-                          alt="user pic"
-                        />
-                      </div>
+                          {prjMembers?.map((member) => (
+                            <div className="team" key={member.userId}>
+                              <Image
+                                className="rounded-circle profile-img border border-secondary"
+                                src="https://avatars.dicebear.com/api/adventurer/1235469874212.svg"
+                                alt="user pic"
+                              />
+                            </div>
+                          ))}
+                      
                       <div
                         id="add-member"
                         className="team"
@@ -271,7 +277,8 @@ function Project() {
                         alt="user pic"
                       />
                       <p className="d-inline-block fw-bold small">
-                        &nbsp;&nbsp;John doe
+                            &nbsp;&nbsp;
+                            {projectOwner?.name}
                       </p>
                     </div>
                   </div>
@@ -282,7 +289,8 @@ function Project() {
             <Tab.Pane className="ms-3 mt-3" eventKey="tasks">
               {!prjTasks.length && (
                 <span>
-                  You have no pending tasks for project {p[pId].projectName}.
+                      You have no pending tasks for project {p[pId].projectName}
+                      .
                 </span>
               )}
               <Table
@@ -361,12 +369,55 @@ function Project() {
             </Tab.Pane>
 
             <Tab.Pane eventKey="members">
-              <p className="">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Non
-                nesciunt voluptatibus fuga dolores nostrum minima officiis,
-                cupiditate rem fugiat et consequatur ad, molestias corrupti quae
-                voluptatem voluptas. Quod, necessitatibus nostrum. lorem100
-              </p>
+                  <div className="row mt-2">
+                    <h4>Project Owner</h4>
+                    <div
+                      className="w-50 mt-2 d-flex"
+                      key={projectOwner?.userId}
+                    >
+                      <div>
+                        <Image
+                          className="rounded-circle profile-img border border-secondary"
+                          src="https://avatars.dicebear.com/api/adventurer/1235469874212.svg"
+                          alt="user pic"
+                        />
+                      </div>
+                      &nbsp;
+                      <div
+                        className="text-truncate"
+                        style={{ maxWidth: "35ch" }}
+                      >
+                        <h5>{projectOwner?.name}</h5>
+                        <span>{projectOwner?.role}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="row mt-4">
+                    <h4>Project Members</h4>
+                    {prjMembers?.map((member) => {
+                      if (!member.isOwner)
+                        return (
+                          <div className="w-50 mt-2 d-flex" key={member.userId}>
+                            <div>
+                              <Image
+                                className="rounded-circle profile-img border border-secondary"
+                                src="https://avatars.dicebear.com/api/adventurer/1235469874212.svg"
+                                alt="user pic"
+                              />
+                            </div>
+                            &nbsp;
+                            <div
+                              className="text-truncate"
+                              style={{ maxWidth: "35ch" }}
+                            >
+                              <h5>{member.name}</h5>
+                              <span>{member.role}</span>
+                            </div>
+                          </div>
+                        );
+                    })}
+                  </div>
             </Tab.Pane>
 
             <Tab.Pane eventKey="more">
@@ -380,6 +431,8 @@ function Project() {
           </Tab.Content>
         </Row>
       </Tab.Container>
+        </>
+      )}
     </Container>
   );
 }

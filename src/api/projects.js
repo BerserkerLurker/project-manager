@@ -1,3 +1,4 @@
+import axios from "axios";
 import { projectsUri, url } from ".";
 import jwtInterceptor from "./helpers/jwtInterceptor";
 
@@ -14,6 +15,30 @@ export async function getAllProjects() {
   }
 }
 
+
+export async function getAllProjectsAssignees(ids) {
+  const requests = ids.map((id) =>
+    jwtInterceptor.get(url + projectsUri + `/members/${id}`, {
+      withCredentials: true,
+      headers: { Authorization: `Bearer ${globalThis.accessToken}` },
+    })
+  );
+  try {
+    const responses = await axios.all(requests);
+    // const members = [];
+    let projectsMembersList = {};
+    responses.forEach((resp) => {
+      projectsMembersList = {
+        ...projectsMembersList,
+        [resp.config.url.split("/").at(-1)]: resp.data,
+      };
+    });
+    // console.log(projectsMembersList);
+    return projectsMembersList;
+  } catch (error) {
+    throw error;
+  }
+}
 
 export async function getProject(id) {
   try {
