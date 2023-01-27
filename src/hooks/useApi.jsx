@@ -20,6 +20,7 @@ export function ApiProvider(children) {
   // @ts-ignore
   const { user } = useAuth();
   const [projectsList, setProjectsList] = useState([]);
+  const [projectsMembersObj, setProjectsMembersObj] = useState({});
   const [tasksList, setTasksList] = useState([]);
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
@@ -39,6 +40,17 @@ export function ApiProvider(children) {
         .getAllProjects()
         .then((projects) => {
           setProjectsList(projects);
+
+          projectsApi
+            .getAllProjectsAssignees(
+              projects.map((project) => project.projectId)
+            )
+            .then((projectsMembers) => {
+              // console.log(projectsMembers);
+              setProjectsMembersObj(projectsMembers);
+            })
+            .catch((error) => setError(error))
+            .finally(() => setLoadingInitial(false));
         })
         .catch((error) => setError(error))
         .finally(() => setLoadingInitial(false));
@@ -200,8 +212,10 @@ export function ApiProvider(children) {
   const memoedValue = useMemo(
     () => ({
       projectsList,
+      projectsMembersObj,
       tasksList,
       loading,
+      loadingInitial,
       error,
       getAllProjects,
       getProject,
@@ -212,7 +226,7 @@ export function ApiProvider(children) {
       createTask,
       updateTask,
     }),
-    [projectsList, tasksList, loading, error]
+    [projectsList, tasksList, projectsMembersObj, loading, error]
   );
   return (
     <ApiContext.Provider value={memoedValue}>
