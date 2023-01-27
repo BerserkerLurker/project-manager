@@ -8,6 +8,8 @@ import React, {
 import { useLocation, useNavigate } from "react-router-dom";
 import * as projectsApi from "../api/projects";
 import * as tasksApi from "../api/tasks";
+import * as rolesApi from "../api/roles";
+import * as teamsApi from "../api/teams";
 import useAuth from "./useAuth";
 
 const ApiContext = createContext({});
@@ -22,6 +24,8 @@ export function ApiProvider(children) {
   const [projectsList, setProjectsList] = useState([]);
   const [projectsMembersObj, setProjectsMembersObj] = useState({});
   const [tasksList, setTasksList] = useState([]);
+  const [rolesList, setRolesList] = useState([]);
+  const [teamsList, setTeamsList] = useState([]);
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
   const [loadingInitial, setLoadingInitial] = useState(true);
@@ -59,6 +63,22 @@ export function ApiProvider(children) {
         .getAllTasks()
         .then((tasks) => {
           setTasksList(tasks);
+        })
+        .catch((error) => setError(error))
+        .finally(() => setLoadingInitial(false));
+
+      rolesApi
+        .getAllRoles()
+        .then((roles) => {
+          setRolesList(roles);
+        })
+        .catch((error) => setError(error))
+        .finally(() => setLoadingInitial(false));
+
+      teamsApi
+        .getAllTeams()
+        .then((teams) => {
+          setTeamsList(teams);
         })
         .catch((error) => setError(error))
         .finally(() => setLoadingInitial(false));
@@ -209,11 +229,73 @@ export function ApiProvider(children) {
       .finally(() => setLoading(false));
   }
 
+  function getAllRoles() {
+    setLoading(true);
+
+    rolesApi
+      .getAllRoles()
+      .then((roles) => {
+        setRolesList(roles);
+      })
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false));
+  }
+
+  function getAllTeams() {
+    setLoading(true);
+
+    teamsApi
+      .getAllTeams()
+      .then((teams) => {
+        setTeamsList(teams);
+      })
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false));
+  }
+
+  function createTeam(params) {
+    setLoading(true);
+
+    teamsApi
+      .createTeam(params)
+      .then((team) => {
+        console.log("api res: " + JSON.stringify(team));
+
+        const updatedData = [...teamsList];
+        updatedData.push(team);
+
+        setTeamsList(updatedData);
+      })
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false));
+  }
+
+  function addTeamMember(params) {
+    setLoading(true);
+
+    return teamsApi
+      .addTeamMember(params)
+      .then((team) => {
+        console.log("api res: " + JSON.stringify(team));
+
+        const oldIndex = teamsList.findIndex((t) => t._id === team._id);
+        const updatedData = [...teamsList];
+        updatedData[oldIndex] = team;
+
+        setTeamsList(updatedData);
+      })
+      .catch((error) => {
+        setError(error);
+      })
+      .finally(() => setLoading(false));
+  }
   const memoedValue = useMemo(
     () => ({
       projectsList,
       projectsMembersObj,
       tasksList,
+      rolesList,
+      teamsList,
       loading,
       loadingInitial,
       error,
@@ -225,6 +307,10 @@ export function ApiProvider(children) {
       getAllTasks,
       createTask,
       updateTask,
+      getAllRoles,
+      getAllTeams,
+      createTeam,
+      addTeamMember,
     }),
     [projectsList, tasksList, projectsMembersObj, loading, error]
   );
