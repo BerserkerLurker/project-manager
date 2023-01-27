@@ -83,7 +83,6 @@ function Tasks() {
     <>
       <Button onClick={handleShowForm}>New Task</Button>
       <div className={!showForm ? "d-none" : ""}>
-
         <div>
           <Formik
             initialValues={{
@@ -100,7 +99,6 @@ function Tasks() {
                 ...values,
                 dueDate: new Date(values.dueDate).toISOString(),
               }).then(() => setSubmitting(false));
-      
             }}
           >
             {({
@@ -198,7 +196,7 @@ function Tasks() {
                     {touched.priority && errors.priority && errors.priority}
                   </div>
                 </Form.Group>
-           
+
                 <Form.Group controlId="formDate">
                   <Form.Label>Due Date:</Form.Label>
                   <Form.Control
@@ -248,12 +246,16 @@ function Tasks() {
                   setTaskModalData(task);
                 }}
               >
-                <Link to="" className={task.isDone && "text-decoration-line-through"}>{task.taskName}</Link>
+                <Link
+                  to=""
+                  className={task.isDone ? "text-decoration-line-through" : ""}
+                >
+                  {task.taskName}
+                </Link>
               </ListGroup.Item>
             ));
           }
         })}
-
       </ListGroup>
       <TaskDetailsModal
         show={showTaskDetailsModal}

@@ -24,8 +24,8 @@ function NavSubMenu({ item }) {
   return (
     <Nav.Item className="d-flex flex-column gap-2" key="sm-88">
       <Nav.Link onClick={(e) => handleClick(e)} className="border" key="sm-88">
-        <div className="d-flex">
-          <span>{item.icon} &nbsp;</span>
+        <div className="d-flex align-items-center">
+          {item.icon} &nbsp;
           <span>{item.title}&nbsp;</span>
           <span className="ms-auto">
             {item.subNav && subNav ? (
@@ -42,15 +42,15 @@ function NavSubMenu({ item }) {
           const subNavTab = item.subNav.map((subItem, index) => {
             return (
               <Nav.Item key={"sm-" + index}>
-              <Nav.Link
+                <Nav.Link
                   className="ms-2 border"
-                as={NavLink}
+                  as={NavLink}
                   to={`project/${subItem.path}`}
                   key={"sm-" + index}
-              >
+                >
                   {subItem.icon}
                   <span>&nbsp;{subItem.title}</span>
-              </Nav.Link>
+                </Nav.Link>
               </Nav.Item>
             );
           });
@@ -62,9 +62,9 @@ function NavSubMenu({ item }) {
                 as={NavLink}
                 to={"newproject"}
               >
-              <PlusCircle />
-              <span>&nbsp;Create New Project</span>
-            </Nav.Link>
+                <PlusCircle />
+                <span>&nbsp;Create New Project</span>
+              </Nav.Link>
             </Nav.Item>
           );
           return subNavTab;

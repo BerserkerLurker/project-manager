@@ -5,6 +5,10 @@
   border: 2px solid $danger;
 }
 
+.has-no-error {
+  border: 2px solid $success;
+}
+
 .error-message {
   display: block;
   color: $danger;

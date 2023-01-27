@@ -5,6 +5,7 @@ import {
   CalendarEventFill,
   EnvelopeFill,
   ListTask,
+  PeopleFill,
   Stack,
 } from "react-bootstrap-icons";
 import { NavLink, useLocation } from "react-router-dom";
@@ -30,7 +31,7 @@ function SideNav() {
   ];
 
   return (
-    <Container className="sticky-top" style={{top: "100px"}}>
+    <Container className="sticky-top" style={{ top: "100px" }}>
       <Nav
         activeKey={location.pathname}
         className="d-flex flex-column gap-2 nav-pills"
@@ -42,28 +43,60 @@ function SideNav() {
         </Nav.Item>
 
         <Nav.Item>
-          <Nav.Link className="border" as={NavLink} to="/boards" key="sn-1">
+          <Nav.Link
+            className="border d-flex align-items-center"
+            as={NavLink}
+            to="/boards"
+            key="sn-1"
+          >
             <BarChartSteps />
             <span>&nbsp;Board</span>
           </Nav.Link>
         </Nav.Item>
 
         <Nav.Item>
-          <Nav.Link className="border" as={NavLink} to="/calendar" key="sn-2">
+          <Nav.Link
+            className="border d-flex align-items-center"
+            as={NavLink}
+            to="/calendar"
+            key="sn-2"
+          >
             <CalendarEventFill />
             <span>&nbsp;Calendar</span>
           </Nav.Link>
         </Nav.Item>
 
         <Nav.Item>
-          <Nav.Link className="border" as={NavLink} to="/tasks" key="sn-3">
+          <Nav.Link
+            className="border d-flex align-items-center"
+            as={NavLink}
+            to="/tasks"
+            key="sn-3"
+          >
             <ListTask />
             <span>&nbsp;Tasks</span>
           </Nav.Link>
         </Nav.Item>
 
         <Nav.Item>
-          <Nav.Link className="border" as={NavLink} to="/messages" key="sn-4">
+          <Nav.Link
+            className="border d-flex align-items-center"
+            as={NavLink}
+            to="/teams"
+            key="sn-4"
+          >
+            <PeopleFill />
+            <span>&nbsp;Teams</span>
+          </Nav.Link>
+        </Nav.Item>
+
+        <Nav.Item>
+          <Nav.Link
+            className="border d-flex align-items-center"
+            as={NavLink}
+            to="/messages"
+            key="sn-4"
+          >
             <EnvelopeFill />
             <span>&nbsp;Messages</span>
           </Nav.Link>
