@@ -256,7 +256,7 @@ export function ApiProvider(children) {
   function createTeam(params) {
     setLoading(true);
 
-    teamsApi
+    return teamsApi
       .createTeam(params)
       .then((team) => {
         console.log("api res: " + JSON.stringify(team));
@@ -278,6 +278,46 @@ export function ApiProvider(children) {
       .then((team) => {
         console.log("api res: " + JSON.stringify(team));
 
+        const oldIndex = teamsList.findIndex((t) => t._id === team._id);
+        const updatedData = [...teamsList];
+        updatedData[oldIndex] = team;
+
+        setTeamsList(updatedData);
+      })
+      .catch((error) => {
+        setError(error);
+      })
+      .finally(() => setLoading(false));
+  }
+
+  function updateTeamMember(params) {
+    setLoading(true);
+
+    return teamsApi
+      .updateTeamMember(params)
+      .then((team) => {
+        console.log("api res: " + JSON.stringify(team));
+
+        const oldIndex = teamsList.findIndex((t) => t._id === team._id);
+        const updatedData = [...teamsList];
+        updatedData[oldIndex] = team;
+
+        setTeamsList(updatedData);
+      })
+      .catch((error) => {
+        setError(error);
+      })
+      .finally(() => setLoading(false));
+  }
+
+  function removeTeamMember(params) {
+    setLoading(true);
+
+    return teamsApi
+      .updateTeamMember(params)
+      .then((team) => {
+        console.log("api res: " + JSON.stringify(team));
+        //TODO - careful with deleted empty teams in future versions
         const oldIndex = teamsList.findIndex((t) => t._id === team._id);
         const updatedData = [...teamsList];
         updatedData[oldIndex] = team;
@@ -311,8 +351,10 @@ export function ApiProvider(children) {
       getAllTeams,
       createTeam,
       addTeamMember,
+      updateTeamMember,
+      removeTeamMember,
     }),
-    [projectsList, tasksList, projectsMembersObj, loading, error]
+    [projectsList, tasksList, projectsMembersObj, teamsList, loading, error]
   );
   return (
     <ApiContext.Provider value={memoedValue}>

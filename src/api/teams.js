@@ -20,6 +20,7 @@ export async function createTeam(params) {
       withCredentials: true,
       headers: { Authorization: `Bearer ${globalThis.accessToken}` },
     });
+    return res.data
   } catch (error) {
     throw error;
   }
@@ -28,7 +29,39 @@ export async function createTeam(params) {
 export async function addTeamMember(params) {
   try {
     const res = await jwtInterceptor.post(
-      url + teamsUri + `/addmember/${params.teamId}`,
+      url + teamsUri + `/members/${params.teamId}`,
+      params,
+      {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${globalThis.accessToken}` },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function updateTeamMember(params) {
+  try {
+    const res = await jwtInterceptor.patch(
+      url + teamsUri + `/members/${params.teamId}`,
+      params,
+      {
+        withCredentials: true,
+        headers: { Authorization: `Bearer ${globalThis.accessToken}` },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function removeTeamMember(params) {
+  try {
+    const res = await jwtInterceptor.patch(
+      url + teamsUri + `/members/${params.teamId}`,
       params,
       {
         withCredentials: true,
