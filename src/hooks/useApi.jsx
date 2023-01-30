@@ -155,7 +155,10 @@ export function ApiProvider(children) {
         ] = project;
         setProjectsList(updatedData);
       })
-      .catch((error) => setError(error))
+      .catch((error) => {
+        setError(error);
+        throw error;
+      })
       .finally(() => setLoading(false));
   }
 
@@ -178,7 +181,10 @@ export function ApiProvider(children) {
         );
         setProjectsList(updatedData);
       })
-      .catch((error) => setError(error))
+      .catch((error) => {
+        setError(error);
+        throw error;
+      })
       .finally(() => setLoading(false));
   }
 

@@ -4,6 +4,7 @@ import React, { forwardRef, useImperativeHandle, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
+import { toast } from "react-toastify";
 import * as Yup from "yup";
 import useApi from "../hooks/useApi";
 
@@ -12,6 +13,7 @@ function EditModal(props, ref) {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
   const {
     projectId,
     projectName,
@@ -20,7 +22,6 @@ function EditModal(props, ref) {
     isDone,
     dueDate,
   } = props.data;
-  console.log(props.data);
 
   // @ts-ignore
   const { updateProject } = useApi();
@@ -68,11 +69,21 @@ function EditModal(props, ref) {
             id: projectId,
             ...values,
             dueDate: new Date(values.dueDate).toISOString(),
-          }).then(() => {
-            setSubmitting(false);
-            handleClose();
-          });
-
+          })
+            .then(() => {
+              setSubmitting(false);
+              handleClose();
+              toast.success(`Project ${values.name} updated successfully!!`);
+            })
+            .catch((error) => {
+              console.log(error);
+              setSubmitting(false);
+              if (error.response.status >= 500) {
+                toast.error("Something went wrong. Try again later.");
+              } else {
+                toast.error(error.response.data.msg);
+              }
+            });
         }}
       >
         {({
