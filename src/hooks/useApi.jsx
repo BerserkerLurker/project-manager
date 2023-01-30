@@ -125,8 +125,12 @@ export function ApiProvider(children) {
         updatedData.push(project);
 
         setProjectsList(updatedData);
+        return project.projectId;
       })
-      .catch((error) => setError(error))
+      .catch((error) => {
+        setError(error);
+        throw error;
+      })
       .finally(() => setLoading(false));
   }
 

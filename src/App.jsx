@@ -9,11 +9,11 @@ function App() {
   return (
     <BrowserRouter>
       <div className="d-flex flex-column min-vh-100">
-      <AuthProvider>
+        <AuthProvider>
           <Header />
-        <Router />
-      </AuthProvider>
-      <Footer />
+          <Router />
+        </AuthProvider>
+        <Footer />
       </div>
     </BrowserRouter>
   );

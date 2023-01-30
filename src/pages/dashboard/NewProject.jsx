@@ -1,10 +1,14 @@
 import { Formik } from "formik";
 import React from "react";
 import { Button, Form } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import * as Yup from "yup";
 import useApi from "../../hooks/useApi";
 
 function NewProject() {
+  const toastId = React.useRef(null);
+
   // @ts-ignore
   const { createProject } = useApi();
   function handleOnKeyDown(keyEvent) {
@@ -35,7 +39,38 @@ function NewProject() {
           createProject({
             ...values,
             dueDate: new Date(values.dueDate).toISOString(),
-          }).then(() => setSubmitting(false)); 
+          })
+            .then((resp) => {
+              setSubmitting(false);
+
+              const dismiss = () => toast.dismiss(toastId.current);
+              (() =>
+                (toastId.current = toast.success(() => (
+                  <>
+                    Project{" "}
+                    <Link
+                      style={{
+                        textDecoration: "none",
+                        padding: "5px",
+                      }}
+                      to={`/project/${resp}`}
+                      className="border-bottom border-3 border-success bg-dark text-light"
+                      onClick={dismiss}
+                    >
+                      {values.name}
+                    </Link>{" "}
+                    created successfully!!
+                  </>
+                ))))();
+            })
+            .catch((error) => {
+              setSubmitting(false);
+              if (error.response.status >= 500) {
+                toast.error("Something went wrong. Try again later.");
+              } else {
+                toast.error(error.response.data.msg);
+              }
+            });
         }}
       >
         {({
