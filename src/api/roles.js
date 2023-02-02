@@ -5,7 +5,7 @@ export async function getAllRoles() {
   try {
     const res = await jwtInterceptor.get(url + rolesUri, {
       withCredentials: true,
-      headers: { Authorization: `Bearer ${globalThis.accessToken}` },
+      headers: { Authorization: `Bearer ${globalThis.targetProxy.accessToken}` },
     });
     // console.log(res.data);
     return res.data;

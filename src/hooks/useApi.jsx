@@ -38,7 +38,7 @@ export function ApiProvider(children) {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (user !== undefined) {
+    if (user !== undefined && user !== null) {
       setLoadingInitial(true);
       projectsApi
         .getAllProjects()

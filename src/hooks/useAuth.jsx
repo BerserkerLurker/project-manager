@@ -8,6 +8,7 @@ export function AuthProvider(children) {
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
   const [loadingInitial, setLoadingInitial] = useState(true);
+  const [token, setToken] = useState("");
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,6 +50,7 @@ export function AuthProvider(children) {
       .then((user) => {
         localStorage.setItem("userProfile", JSON.stringify(user));
         setUser(user);
+        setToken(globalThis.targetProxy.accessToken);
         navigate("/", { replace: true });
       })
       .catch((error) => setError(error))
@@ -59,6 +61,7 @@ export function AuthProvider(children) {
     authApi.logout().then(() => {
       setUser(undefined);
       localStorage.removeItem("userProfile");
+      setToken("");
       navigate("login", { replace: true });
     });
   }
@@ -71,6 +74,7 @@ export function AuthProvider(children) {
       .then((user) => {
         localStorage.setItem("userProfile", JSON.stringify(user));
         setUser(user);
+        setToken(globalThis.targetProxy.accessToken);
         navigate("/profile", { replace: true });
       })
       .catch((error) => setError(error))
@@ -78,20 +82,38 @@ export function AuthProvider(children) {
         setTimeout(() => {
           setLoading(false);
         }, 2000);
-    });
+      });
   }
 
+  globalThis.targetProxy = new Proxy(globalThis.accessToken, {
+    set: function (target, key, value) {
+      if (!target.token) {
+        // console.log(`${key.toString()} set to ${value}`);
+        target[key] = value;
+        setToken(value);
+      }
+      return true;
+    },
+    get: function (target, prop, receiver) {
+      if (prop === "token") {
+        return target.token;
+      }
+      // @ts-ignore
+      return Reflect.get(...arguments);
+    },
+  });
   const memoedValue = useMemo(
     () => ({
       user,
       loading,
       error,
+      token,
       login,
       signUp,
       logout,
       updateUser,
     }),
-    [user, loading, error]
+    [user, loading, error, token]
   );
 
   return (

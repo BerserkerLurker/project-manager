@@ -9,4 +9,4 @@ export const projectsUri = "/projects";
 export const tasksUri = "/tasks";
 export const rolesUri = "/roles";
 export const teamsUri = "/teams";
-globalThis.accessToken = "";
+globalThis.accessToken = { token: "" };

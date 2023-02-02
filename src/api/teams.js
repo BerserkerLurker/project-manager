@@ -5,7 +5,7 @@ export async function getAllTeams() {
   try {
     const res = await jwtInterceptor.get(url + teamsUri, {
       withCredentials: true,
-      headers: { Authorization: `Bearer ${globalThis.accessToken}` },
+      headers: { Authorization: `Bearer ${globalThis.targetProxy.accessToken}` },
     });
     // console.log(res.data);
     return res.data;
@@ -18,7 +18,7 @@ export async function createTeam(params) {
   try {
     const res = await jwtInterceptor.post(url + teamsUri, params, {
       withCredentials: true,
-      headers: { Authorization: `Bearer ${globalThis.accessToken}` },
+      headers: { Authorization: `Bearer ${globalThis.targetProxy.accessToken}` },
     });
     return res.data
   } catch (error) {
@@ -33,7 +33,7 @@ export async function addTeamMember(params) {
       params,
       {
         withCredentials: true,
-        headers: { Authorization: `Bearer ${globalThis.accessToken}` },
+        headers: { Authorization: `Bearer ${globalThis.targetProxy.accessToken}` },
       }
     );
     return res.data;
@@ -49,7 +49,7 @@ export async function updateTeamMember(params) {
       params,
       {
         withCredentials: true,
-        headers: { Authorization: `Bearer ${globalThis.accessToken}` },
+        headers: { Authorization: `Bearer ${globalThis.targetProxy.accessToken}` },
       }
     );
     return res.data;
@@ -65,7 +65,7 @@ export async function removeTeamMember(params) {
       params,
       {
         withCredentials: true,
-        headers: { Authorization: `Bearer ${globalThis.accessToken}` },
+        headers: { Authorization: `Bearer ${globalThis.targetProxy.accessToken}` },
       }
     );
     return res.data;

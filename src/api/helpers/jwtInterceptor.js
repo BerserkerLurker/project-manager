@@ -17,10 +17,10 @@ jwtInterceptor.interceptors.response.use(
             withCredentials: true,
           }
         );
-        globalThis.accessToken = res.data.accessToken;
+        globalThis.targetProxy.accessToken = res.data.accessToken;
         error.config.headers[
           "Authorization"
-        ] = `Bearer ${globalThis.accessToken}`;
+        ] = `Bearer ${globalThis.targetProxy.accessToken}`;
         // console.log(error.config);
         return axios(error.config);
       } catch (err) {
