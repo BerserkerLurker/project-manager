@@ -20,7 +20,6 @@ function AddByEmailModal(props, ref) {
   };
   const { myteams } = props;
   const targetTeamMembers = myteams.find((e) => e._id === teamId)?.members;
-  console.log(targetTeamMembers);
 
   const emailRegex =
     /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

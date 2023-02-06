@@ -99,7 +99,6 @@ function NewProject() {
                 &nbsp;{touched.name && errors.name && errors.name}
               </div>
             </Form.Group>
-
             <Form.Group controlId="formDescription">
               <Form.Label>Description:</Form.Label>
               <Form.Control
@@ -114,7 +113,6 @@ function NewProject() {
               ></Form.Control>
               <div className="error-message">&nbsp;</div>
             </Form.Group>
-
             <Form.Group controlId="formStatus">
               <Form.Label>Status:</Form.Label>
               <Form.Select
@@ -131,6 +129,7 @@ function NewProject() {
                 &nbsp;{touched.status && errors.status && errors.status}
               </div>
             </Form.Group>
+            {/* //NOTE -  maybe https://getdatepicker.com/6/installing.html */}
             <Form.Group controlId="formDate">
               <Form.Label>Due Date:</Form.Label>
               <Form.Control

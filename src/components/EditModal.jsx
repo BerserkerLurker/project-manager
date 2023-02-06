@@ -147,6 +147,7 @@ function EditModal(props, ref) {
                     </>
                   </div>
                 </Form.Group>
+                {/* //NOTE -  maybe https://getdatepicker.com/6/installing.html */}
                 <Form.Group controlId="formDate">
                   <Form.Label>Due Date:</Form.Label>
                   <Form.Control

@@ -12,6 +12,7 @@ function Project() {
   const toastId = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+  // const pIndex = location.state?.project?.projectId;
   const {
     // @ts-ignore
     projectsList: p,
@@ -27,7 +28,13 @@ function Project() {
     updateTask,
     // @ts-ignore
     projectsMembersObj,
+    // @ts-ignore
+    handleAddProjectMember,
   } = useApi();
+
+  // for (let [key, value] of Object.entries(projectsMembersObj)) {
+  //   console.log(`${key}: ${value}`);
+  // }
 
   const pathId = location.pathname.split("/").at(-1);
   const pId = p.findIndex((o) => o.projectId === pathId);
@@ -165,7 +172,7 @@ function Project() {
                             <div className="team" key={member.userId}>
                               <Image
                                 className="rounded-circle profile-img border border-secondary"
-                                src="https://avatars.dicebear.com/api/adventurer/1235469874212.svg"
+                                src={member.avatar}
                                 alt="user pic"
                               />
                             </div>
@@ -214,12 +221,13 @@ function Project() {
                         <div>
                           <Image
                             className=" rounded-circle profile-img border border-secondary"
-                            src="https://picsum.photos/100"
+                            src={projectOwner?.avatar}
                             alt="user pic"
                           />
                           <p className="d-inline-block fw-bold small">
                             &nbsp;&nbsp;
                             {projectOwner?.name}
+                            {/* // TODO - need to query userProjects */}
                           </p>
                         </div>
                       </div>
@@ -319,7 +327,7 @@ function Project() {
                       <div>
                         <Image
                           className="rounded-circle profile-img border border-secondary"
-                          src="https://avatars.dicebear.com/api/adventurer/1235469874212.svg"
+                          src={projectOwner?.avatar}
                           alt="user pic"
                         />
                       </div>
@@ -343,7 +351,7 @@ function Project() {
                             <div>
                               <Image
                                 className="rounded-circle profile-img border border-secondary"
-                                src="https://avatars.dicebear.com/api/adventurer/1235469874212.svg"
+                                src={member.avatar}
                                 alt="user pic"
                               />
                             </div>

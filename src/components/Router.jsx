@@ -26,8 +26,8 @@ function AuthenticatedRoute() {
       if (location.pathname === "/signup") {
         return navigate("/signup", { replace: true });
       } else {
-      return navigate("/login", { replace: true });
-    }
+        return navigate("/login", { replace: true });
+      }
     }
     return navigate(location.pathname, { replace: true });
   }, [user, location.pathname]);

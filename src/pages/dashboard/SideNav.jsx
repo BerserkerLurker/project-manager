@@ -12,6 +12,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import NavSubMenu from "../../components/NavSubMenu";
 import useApi from "../../hooks/useApi";
 
+// TODO - Make it collapseable and an overlay on sm and md https://getbootstrap.com/docs/5.2/components/navbar/#offcanvas
 function SideNav() {
   // @ts-ignore
   let { projectsList } = useApi();
