@@ -1,16 +1,18 @@
 import { Formik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import { Button, Container, Form, Image } from "react-bootstrap";
 import * as Yup from "yup";
+import ProfileAvatarsModal from "../../components/ProfileAvatarsModal";
 import useApi from "../../hooks/useApi";
 import useAuth from "../../hooks/useAuth";
 
 //TODO - Use https://dicebear.com/ for profile customization
 function Profile() {
+  const [modalShow, setModalShow] = useState(false);
   // @ts-ignore
   const { error, loading, user, updateUser } = useAuth();
-  console.log(user);
-  
+  const [avatarUrl, setAvatarUrl] = useState(user.avatar);
+
   // @ts-ignore
   const { rolesList, teamsList } = useApi();
   // console.log([...rolesList.map((e) => e.name)]);
@@ -43,12 +45,9 @@ function Profile() {
       ),
   });
 
-  const handleImageClick = (e) => {
+  const handleImageClick = (url) => {
     //TODO - https://cloudinary.com/documentation/image_upload_api_reference for image upload
-    const avatarUrl =
-      "https://api.dicebear.com/5.x/bottts/svg?seed=" +
-      (Math.random() * 10).toFixed(0);
-    e.target.src = avatarUrl;
+    setAvatarUrl(url);
   };
 
   return (
@@ -62,7 +61,7 @@ function Profile() {
               name: user.name,
               email: user.email,
               newPassword: "",
-              avatar: "",
+              avatar: user.avatar,
               role: user.role,
               team: user.team,
             }}
@@ -72,6 +71,7 @@ function Profile() {
                 userId: user.userId,
                 password: values.newPassword,
                 ...values,
+                avatar: avatarUrl,
               };
               updateUser(params);
               setSubmitting(false);
@@ -99,13 +99,20 @@ function Profile() {
                 /> */}
                     <Image
                       onClick={(e) => {
-                        handleImageClick(e);
-                        setFieldValue("avatar", e.currentTarget.src);
+                        setModalShow(true);
+                        // setFieldValue("avatar", e.currentTarget.src);
                       }}
                       style={{ height: "200px" }}
                       className="d-block mt-3 mx-auto rounded-circle profile-img border border-2 border-secondary"
-                      src="https://avatars.dicebear.com/api/adventurer/1235469874212.svg"
+                      src={avatarUrl}
                       alt="user pic"
+                    />
+                    <ProfileAvatarsModal
+                      show={modalShow}
+                      handleimgclick={(url) => {
+                        handleImageClick(url);
+                      }}
+                      onHide={() => setModalShow(false)}
                     />
                   </div>
                   <div className="col">
