@@ -23,7 +23,7 @@ export function AuthProvider(children) {
     if (savedProfile !== "undefined") {
       setUser(JSON.parse(savedProfile));
     } else {
-      navigate("login");
+      navigate("login", { replace: true });
     }
     setLoadingInitial(false);
   }, []);
@@ -36,6 +36,7 @@ export function AuthProvider(children) {
       .then((user) => {
         localStorage.setItem("userProfile", JSON.stringify(user));
         setUser(user);
+        setToken(globalThis.targetProxy.accessToken);
         navigate("/", { replace: true });
       })
       .catch((error) => setError(error))

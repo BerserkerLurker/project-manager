@@ -11,9 +11,12 @@ function Home() {
         <Outlet />
       </main>
       <ToastContainer
+        className="mb-5"
+        position="bottom-right"
         closeOnClick={false}
         draggable={true}
         transition={Slide}
+        newestOnTop={true}
       />
     </ApiProvider>
   );

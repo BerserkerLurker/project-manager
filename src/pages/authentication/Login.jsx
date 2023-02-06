@@ -1,6 +1,7 @@
 import { Formik } from "formik";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Container, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import useAuth from "../../hooks/useAuth";
 
@@ -18,7 +19,15 @@ const validationSchema = Yup.object().shape({
 });
 
 function Login() {
-  const { error, loading, login } = useAuth();
+  // @ts-ignore
+  const { error, loading, login, user } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (user) {
+      navigate("/", { replace: true });
+    }
+  });
+
   return (
     <div>
       Login
