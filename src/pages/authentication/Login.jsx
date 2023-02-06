@@ -29,18 +29,14 @@ function Login() {
   });
 
   return (
-    <div>
-      Login
+    <div className="mx-auto mt-5 col-5">
       <Container fluid>
         <Formik
           initialValues={{ email: "", password: "" }}
           validationSchema={validationSchema}
           // validator={() => ({})} // Validate all for testing
           onSubmit={(values, { setSubmitting, resetForm }) => {
-            // setSubmitting(true);
             login(values.email, values.password);
-            // resetForm();
-            // setSubmitting(false);
           }}
         >
           {({
@@ -64,9 +60,9 @@ function Login() {
                   value={values.email}
                   className={touched.email && errors.email ? "has-error" : null}
                 />
-                {touched.email && errors.email ? (
-                  <div className="error-message">{errors.email}</div>
-                ) : null}
+                <div className="error-message">
+                  &nbsp;{touched.email && errors.email && errors.email}
+                </div>
               </Form.Group>
 
               <Form.Group controlId="formPassword">
@@ -82,11 +78,16 @@ function Login() {
                     touched.password && errors.password ? "has-error" : null
                   }
                 />
-                {touched.password && errors.password ? (
-                  <div className="error-message">{errors.password}</div>
-                ) : null}
+                <div className="error-message">
+                  &nbsp;{touched.password && errors.password && errors.password}
+                </div>
               </Form.Group>
-              <Button variant="primary" type="submit" disabled={loading}>
+              <Button
+                className="w-100 mt-1"
+                variant="primary"
+                type="submit"
+                disabled={loading}
+              >
                 Login
               </Button>
               {error && !loading ? (

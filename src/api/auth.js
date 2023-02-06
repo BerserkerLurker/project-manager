@@ -18,6 +18,7 @@ export async function login(params) {
     return res.data.user;
   } catch (error) {
     console.log(error);
+    throw error;
   }
 }
 
@@ -30,6 +31,7 @@ export async function signUp(params) {
     return res.data.user;
   } catch (error) {
     console.log(error);
+    throw error;
   }
 }
 
@@ -45,6 +47,7 @@ export async function logout() {
     globalThis.targetProxy.accessToken = "";
   } catch (error) {
     console.log(error);
+    throw error;
   }
 }
 
@@ -53,12 +56,15 @@ export async function updateUser(params) {
     console.log(params);
     const res = await jwtInterceptor.patch(url + updateUserUri, params, {
       withCredentials: true,
-      headers: { Authorization: `Bearer ${globalThis.targetProxy.accessToken}` },
+      headers: {
+        Authorization: `Bearer ${globalThis.targetProxy.accessToken}`,
+      },
     });
     globalThis.targetProxy.accessToken = res.data.accessToken;
     return res.data.user;
   } catch (error) {
     console.log(error);
+    throw error;
   }
 }
 
@@ -66,7 +72,9 @@ export async function checkEmail(email) {
   try {
     const res = await jwtInterceptor.post(url + checkEmailUri, email, {
       withCredentials: true,
-      headers: { Authorization: `Bearer ${globalThis.targetProxy.accessToken}` },
+      headers: {
+        Authorization: `Bearer ${globalThis.targetProxy.accessToken}`,
+      },
     });
     // console.log(res.data);
     return res.data;
