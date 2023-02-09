@@ -19,6 +19,8 @@ function Project() {
     // @ts-ignore
     tasksList: t,
     // @ts-ignore
+    rolesList,
+    // @ts-ignore
     loadingInitial,
     // @ts-ignore
     updateProject,
@@ -165,7 +167,7 @@ function Project() {
                       </div>
 
                       <div className="mb-3">
-                        <h3>Team:</h3>
+                        <h3>Project members:</h3>
 
                         <div className="d-flex align-content-center">
                           {prjMembers?.map((member) => (
@@ -187,6 +189,11 @@ function Project() {
                               className="border border-secondary rounded-circle"
                               size={60}
                               color={"tomato"}
+                              onClick={() => {
+                                console.log(
+                                  "assign teammate or invite user by email"
+                                );
+                              }}
                             />
                           </div>
                         </div>
@@ -337,7 +344,12 @@ function Project() {
                         style={{ maxWidth: "35ch" }}
                       >
                         <h5>{projectOwner?.name}</h5>
-                        <span>{projectOwner?.role}</span>
+                        {/* <span>{projectOwner?.role}</span> */}
+                        {rolesList
+                          .filter((elem) => elem._id === projectOwner?.role)
+                          .map((e) => (
+                            <>{e.name}</>
+                          ))}
                       </div>
                     </div>
                   </div>
@@ -361,7 +373,12 @@ function Project() {
                               style={{ maxWidth: "35ch" }}
                             >
                               <h5>{member.name}</h5>
-                              <span>{member.role}</span>
+                              {/* <span>{member.role}</span> */}
+                              {rolesList
+                                .filter((elem) => elem._id === member?.role)
+                                .map((e) => (
+                                  <>{e.name}</>
+                                ))}
                             </div>
                           </div>
                         );

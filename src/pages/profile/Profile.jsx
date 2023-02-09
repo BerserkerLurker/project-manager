@@ -6,7 +6,6 @@ import ProfileAvatarsModal from "../../components/ProfileAvatarsModal";
 import useApi from "../../hooks/useApi";
 import useAuth from "../../hooks/useAuth";
 
-//TODO - Use https://dicebear.com/ for profile customization
 function Profile() {
   const [modalShow, setModalShow] = useState(false);
   // @ts-ignore
