@@ -113,6 +113,20 @@ export function ApiProvider(children) {
       .finally(() => setLoading(false));
   }
 
+  // function getAllProjectAssignees(projectId) {
+  //   setLoading(true);
+
+  //   return projectsApi
+  //     .getAllProjectAssignees(projectId)
+  //     .then((members) => {
+  //       console.log("Members: " + JSON.stringify(members));
+  //     })
+  //     .catch((error) => {
+  //       setError(error);
+  //     })
+  //     .finally(() => setLoading(false));
+  // }
+
   function createProject(params) {
     setLoading(true);
 
@@ -339,6 +353,22 @@ export function ApiProvider(children) {
       })
       .finally(() => setLoading(false));
   }
+
+  function assignUserToProject(params) {
+    setLoading(true);
+
+    return projectsApi
+      .assignUserToProject(params)
+      .then((newMember) => {
+        const obj = projectsMembersObj;
+        obj[newMember.projectId].push(newMember);
+
+        setProjectsMembersObj(obj);
+      })
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false));
+  }
+
   const memoedValue = useMemo(
     () => ({
       projectsList,
@@ -363,6 +393,7 @@ export function ApiProvider(children) {
       addTeamMember,
       updateTeamMember,
       removeTeamMember,
+      assignUserToProject,
     }),
     [projectsList, tasksList, projectsMembersObj, teamsList, loading, error]
   );
