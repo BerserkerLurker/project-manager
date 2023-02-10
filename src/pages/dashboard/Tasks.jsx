@@ -237,10 +237,15 @@ function Tasks() {
       <ListGroup as="ol" variant="flush">
         {badgeProps.map((project) => {
           if (!project.filterOut) {
-            return project.tasksL.map((task, index) => (
+            const pName = (
+              <Link to={`/project/${project.projectId}`}>
+                {project.projectName}
+              </Link>
+            );
+            const pTs = project.tasksL.map((task, index) => (
               <ListGroup.Item
                 as="li"
-                key={index}
+                key={task.taskId}
                 onClick={() => {
                   setShowTaskDetailsModal(true);
                   setTaskModalData(task);
@@ -254,6 +259,15 @@ function Tasks() {
                 </Link>
               </ListGroup.Item>
             ));
+
+            if (pTs.length > 0) {
+              return (
+                <>
+                  {pName}
+                  {pTs}
+                </>
+              );
+            }
           }
         })}
       </ListGroup>

@@ -62,7 +62,7 @@ function Project() {
   const [ownerFeature, setOwnerFeature] = useState(false);
 
   useEffect(() => {
-    if (p[pId].isOwner) {
+    if (p[pId]?.isOwner) {
       setOwnerFeature(true);
     } else {
       setOwnerFeature(false);
@@ -413,7 +413,6 @@ function Project() {
                           <div
                             id="add-member"
                             className="team"
-                            onClick={handleNewProjectMember}
                           >
                             <Plus
                               className="border border-secondary rounded-circle"
