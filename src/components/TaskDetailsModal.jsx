@@ -13,7 +13,6 @@ function TaskDetailsModal(props) {
   const [showForm, setShowForm] = useState(false);
 
   const task = props.data;
-  console.log(props);
 
   function handleOnKeyDown(keyEvent) {
     if (keyEvent.key === "Enter") {
@@ -42,10 +41,12 @@ function TaskDetailsModal(props) {
   });
   return (
     <Modal
-      size="lg"
       {...props}
       aria-labelledby="contained-modal-title-vcenter"
-      centered
+      onHide={() => {
+        props.onHide();
+        setShowForm(false);
+      }}
     >
       <Formik
         initialValues={{

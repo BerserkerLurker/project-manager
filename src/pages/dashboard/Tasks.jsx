@@ -258,6 +258,8 @@ function Tasks() {
         })}
       </ListGroup>
       <TaskDetailsModal
+        size={"lg"}
+        centered
         show={showTaskDetailsModal}
         onHide={() => setShowTaskDetailsModal(false)}
         data={taskModalData}

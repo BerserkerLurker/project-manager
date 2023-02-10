@@ -1,11 +1,15 @@
-import { useEffect, useRef, useState } from "react";
-import { Container, Image, Nav, Row, Tab, Table } from "react-bootstrap";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Container, Image, Nav, Row, Tab } from "react-bootstrap";
+import BTable from "react-bootstrap/Table";
 import { CheckCircle, PencilSquare, Plus, Trash } from "react-bootstrap-icons";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useTable } from "react-table";
 import { toast } from "react-toastify";
 import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
 import EditModal from "../../components/EditModal";
 import useApi from "../../hooks/useApi";
+import moment from "moment";
+import TaskDetailsModal from "../../components/TaskDetailsModal";
 // name, desc, isDone, status, dueDate, createdAt, owner, participants, tasks and actions edit, delete ...
 function Project() {
   const ref = useRef(null);
@@ -56,6 +60,188 @@ function Project() {
 
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
 
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Task name",
+        accessor: "taskName",
+        Cell: (props) => (
+          <>
+            <CheckCircle
+              style={{ cursor: "pointer" }}
+              size={24}
+              color={props.cell.row.original.isDone ? "green" : "gray"}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleTaskCheck(
+                  props.cell.row.original.isDone,
+                  props.cell.row.original.taskId,
+                  props.cell.row.original.taskName
+                );
+              }}
+            />
+            &nbsp;&nbsp;&nbsp;
+            <span>{props.value}</span>
+          </>
+        ),
+      },
+      {
+        Header: "Status",
+        accessor: "status",
+        Cell: (props) => {
+          return (
+            <span
+              className={
+                props.value === "onTrack"
+                  ? "text-success"
+                  : props.value === "atRisk"
+                  ? "text-warning"
+                  : "text-danger"
+              }
+            >
+              {props.value === "onTrack"
+                ? "On track"
+                : props.value === "atRisk"
+                ? "At risk"
+                : "Off track"}
+            </span>
+          );
+        },
+      },
+      {
+        Header: "Priority",
+        accessor: "priority",
+        Cell: (props) => {
+          return (
+            <span
+              className={
+                props.value === "high"
+                  ? "text-bg-success rounded p-1 text-capitalize"
+                  : props.value === "medium"
+                  ? "text-bg-warning rounded p-1 text-capitalize"
+                  : "text-bg-danger rounded p-1 text-capitalize"
+              }
+            >
+              {props.value}
+            </span>
+          );
+        },
+      },
+      {
+        Header: "Due date",
+        accessor: "dueDate",
+        Cell: (props) => (
+          <span
+            style={{
+              color:
+                moment(props.value) < moment()
+                  ? "red"
+                  : moment(props.value).diff(moment(), "days") > 0
+                  ? "gray"
+                  : "green",
+            }}
+          >
+            {Math.abs(moment(props.value).diff(moment(), "days")) < 15
+              ? moment(props.value).fromNow().toString()
+              : moment(props.value).format("LL").toString()}
+          </span>
+        ),
+      },
+      {
+        Header: "Created",
+        accessor: "createdAt",
+        Cell: (props) => (
+          <span>
+            {Math.abs(moment(props.value).diff(moment(), "days")) < 15
+              ? moment(props.value).fromNow().toString()
+              : moment(props.value).format("LL").toString()}
+          </span>
+        ),
+      },
+      {
+        Header: "Assignee",
+        accessor: "",
+        Cell: () => (
+          <div className="d-flex">
+            <div className="teamstatic">
+              <Image
+                className="rounded-circle profile-img border border-secondary"
+                src="https://picsum.photos/60"
+                alt="user pic"
+              />
+            </div>
+            <div className="teamstatic">
+              <Image
+                className="rounded-circle profile-img border border-secondary"
+                src="https://picsum.photos/60"
+                alt="user pic"
+              />
+            </div>
+            <div className="teamstatic">
+              <Image
+                className="rounded-circle profile-img border border-secondary"
+                src="https://picsum.photos/60"
+                alt="user pic"
+              />
+            </div>
+          </div>
+        ),
+      },
+    ],
+    []
+  );
+
+  const data = useMemo(() => prjTasks, [prjTasks]);
+
+  const Table = ({ columns, data }) => {
+    // const [records, setRecords] = useState(data);
+
+    // const getRowId = useCallback(row => {return row.id},[])
+
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+      useTable({ data, columns });
+
+    return (
+      <BTable
+        responsive
+        className={data.length ? "table-hover" : "d-none"}
+        {...getTableProps()}
+      >
+        <thead className="table-light">
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody className="table-group-divider" {...getTableBodyProps()}>
+          {rows.map((row, i) => {
+            prepareRow(row);
+            return (
+              <tr
+                style={{ cursor: "pointer" }}
+                {...row.getRowProps()}
+                onClick={() => {
+                  setShowTaskDetailsModal(true);
+                  setTaskModalData(row.original);
+                  console.log(row.original);
+                }}
+              >
+                {row.cells.map((cell) => {
+                  return (
+                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </BTable>
+    );
+  };
+
   const handleNewProjectMember = () => {
     //TODO - show modal to enter email address (later select from existing list say friends teammates...)
   };
@@ -92,6 +278,9 @@ function Project() {
       }
     });
   };
+
+  const [showTaskDetailsModal, setShowTaskDetailsModal] = useState(false);
+  const [taskModalData, setTaskModalData] = useState({});
 
   return (
     <Container>
@@ -242,89 +431,28 @@ function Project() {
                   </div>
                 </Tab.Pane>
 
-                <Tab.Pane className="ms-3 mt-3" eventKey="tasks">
+                <Tab.Pane className="mt-3" eventKey="tasks">
                   {!prjTasks.length && (
                     <span>
                       You have no pending tasks for project {p[pId].projectName}
                       .
                     </span>
                   )}
-                  <Table
-                    responsive
-                    className={prjTasks.length ? "table-hover" : "d-none"}
-                  >
-                    <thead className="table-light">
-                      <tr>
-                        <th></th>
-                        <th>Task Name</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th>Priority</th>
-                        <th>Due Date</th>
-                        <th>Created At</th>
-                        <th>Assignee(s)</th>
-                      </tr>
-                    </thead>
-                    <tbody className="table-group-divider">
-                      {prjTasks.map((task) => {
-                        return (
-                          <tr key={task.taskId}>
-                            <th>
-                              <CheckCircle
-                                style={{ cursor: "pointer" }}
-                                size={24}
-                                color={task.isDone ? "green" : "gray"}
-                                onClick={() => {
-                                  handleTaskCheck(
-                                    task.isDone,
-                                    task.taskId,
-                                    task.taskName
-                                  );
-                                }}
-                              />{" "}
-                            </th>
-                            <td>{task.taskName}</td>
-                            <td
-                              className="text-truncate"
-                              style={{ maxWidth: "15ch" }}
-                            >
-                              {task.description}
-                            </td>
-                            <td>{task.status}</td>
-                            <td>{task.priority}</td>
-                            <td>{new Date(task.dueDate).toLocaleString()}</td>
-                            <td>{new Date(task.createdAt).toLocaleString()}</td>
-                            <td className="d-flex">
-                              <div className="teamstatic">
-                                <Image
-                                  className="rounded-circle profile-img border border-secondary"
-                                  src="https://picsum.photos/60"
-                                  alt="user pic"
-                                />
-                              </div>
-                              <div className="teamstatic">
-                                <Image
-                                  className="rounded-circle profile-img border border-secondary"
-                                  src="https://picsum.photos/60"
-                                  alt="user pic"
-                                />
-                              </div>
-                              <div className="teamstatic">
-                                <Image
-                                  className="rounded-circle profile-img border border-secondary"
-                                  src="https://picsum.photos/60"
-                                  alt="user pic"
-                                />
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </Table>
+
+                  <TaskDetailsModal
+                    show={showTaskDetailsModal}
+                    onHide={() => setShowTaskDetailsModal(false)}
+                    data={taskModalData}
+                    dialogClassName="modal-right"
+                    backdropClassName="modal-right-backdrop"
+                    contentClassName="modal-right-content"
+                    animation={false}
+                  />
+
+                  <Table columns={columns} data={data} />
                 </Tab.Pane>
 
-                <Tab.Pane eventKey="members">
+                <Tab.Pane className="ms-3 mt-3" eventKey="members">
                   <div className="row mt-2">
                     <h4>Project Owner</h4>
                     <div
