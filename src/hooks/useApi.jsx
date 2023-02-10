@@ -29,6 +29,7 @@ export function ApiProvider(children) {
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
   const [loadingInitial, setLoadingInitial] = useState(true);
+  const [userTeams, setUserTeams] = useState([]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -86,6 +87,23 @@ export function ApiProvider(children) {
       setLoadingInitial(false);
     }
   }, [user]);
+
+  useEffect(() => {
+    let teams = [];
+    if (teamsList) {
+      teams = teamsList
+        .map((team) => {
+          if (
+            team.members.filter((member) => member.memberId._id === user.userId)
+              .length > 0
+          ) {
+            return team;
+          }
+        })
+        .filter((team) => team !== undefined);
+    }
+    setUserTeams(teams);
+  }, [teamsList]);
 
   function getAllProjects() {
     setLoading(true);
@@ -376,11 +394,13 @@ export function ApiProvider(children) {
       tasksList,
       rolesList,
       teamsList,
+      userTeams,
       loading,
       loadingInitial,
       error,
       getAllProjects,
       getProject,
+      // getAllProjectAssignees,
       createProject,
       updateProject,
       deleteProject,

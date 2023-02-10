@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Container, Image, Nav, Row, Tab } from "react-bootstrap";
 import BTable from "react-bootstrap/Table";
-import { CheckCircle, PencilSquare, Plus, Trash } from "react-bootstrap-icons";
+import {
+  CheckCircle,
+  PencilSquare,
+  PersonFillAdd,
+  Plus,
+  Trash,
+} from "react-bootstrap-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTable } from "react-table";
 import { toast } from "react-toastify";
@@ -10,9 +16,12 @@ import EditModal from "../../components/EditModal";
 import useApi from "../../hooks/useApi";
 import moment from "moment";
 import TaskDetailsModal from "../../components/TaskDetailsModal";
+import useAuth from "../../hooks/useAuth";
+import InviteUserToProjectModal from "../../components/InviteUserToProjectModal";
 // name, desc, isDone, status, dueDate, createdAt, owner, participants, tasks and actions edit, delete ...
 function Project() {
   const ref = useRef(null);
+  const refMember = useRef(null);
   const toastId = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -25,6 +34,8 @@ function Project() {
     // @ts-ignore
     rolesList,
     // @ts-ignore
+    userTeams,
+    // @ts-ignore
     loadingInitial,
     // @ts-ignore
     updateProject,
@@ -34,9 +45,10 @@ function Project() {
     updateTask,
     // @ts-ignore
     projectsMembersObj,
-    // @ts-ignore
-    handleAddProjectMember,
   } = useApi();
+
+  // @ts-ignore
+  const { user } = useAuth();
 
   // for (let [key, value] of Object.entries(projectsMembersObj)) {
   //   console.log(`${key}: ${value}`);
@@ -47,6 +59,15 @@ function Project() {
 
   const [prjTasks, setPrjTasks] = useState([]);
   const [prjMembers, setPrjMembers] = useState([]);
+  const [ownerFeature, setOwnerFeature] = useState(false);
+
+  useEffect(() => {
+    if (p[pId].isOwner) {
+      setOwnerFeature(true);
+    } else {
+      setOwnerFeature(false);
+    }
+  }, [pathId]);
 
   useEffect(() => {
     setPrjTasks(t.filter((task) => task.projectId === pathId));
@@ -57,6 +78,24 @@ function Project() {
   }, [pathId, projectsMembersObj]);
 
   const projectOwner = prjMembers?.find((m) => m.isOwner);
+
+  const [userTeammates, setUserTeammates] = useState([]);
+  useEffect(() => {
+    const uList = [];
+    userTeams
+      .map((team) => team.members)
+      .map((membersArray) => {
+        membersArray.map((member) => {
+          if (
+            member.status === "accepted" &&
+            member.memberId._id !== user.userId
+          ) {
+            uList.push(member.memberId);
+          }
+        });
+      });
+    setUserTeammates(uList);
+  }, [userTeams, pathId]);
 
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
 
@@ -242,10 +281,6 @@ function Project() {
     );
   };
 
-  const handleNewProjectMember = () => {
-    //TODO - show modal to enter email address (later select from existing list say friends teammates...)
-  };
-
   const deleteProjectHandler = () => {
     deleteProject(p[pId].projectId)
       .then(() => {
@@ -311,16 +346,22 @@ function Project() {
             <div>
               <PencilSquare
                 size={24}
-                color={"green"}
+                color={ownerFeature ? "green" : "gray"}
                 className="me-4"
-                style={{ cursor: "pointer" }}
-                onClick={() => ref.current.handleShow()}
+                style={{
+                  cursor: "pointer",
+                  pointerEvents: ownerFeature ? "auto" : "none",
+                }}
+                onClick={() => ref.current?.handleShow()}
               />
               <Trash
                 size={24}
-                color={"tomato"}
+                color={ownerFeature ? "tomato" : "gray"}
                 className="me-2"
-                style={{ cursor: "pointer" }}
+                style={{
+                  cursor: "pointer",
+                  pointerEvents: ownerFeature ? "auto" : "none",
+                }}
                 onClick={() => {
                   console.log("delete");
                   setShowConfirmDeleteModal(true);
@@ -472,7 +513,6 @@ function Project() {
                         style={{ maxWidth: "35ch" }}
                       >
                         <h5>{projectOwner?.name}</h5>
-                        {/* <span>{projectOwner?.role}</span> */}
                         {rolesList
                           .filter((elem) => elem._id === projectOwner?.role)
                           .map((e) => (
@@ -482,8 +522,31 @@ function Project() {
                     </div>
                   </div>
 
+                  <InviteUserToProjectModal
+                    ref={refMember}
+                    userTeammates={userTeammates}
+                    prjMembers={prjMembers}
+                  />
                   <div className="row mt-4">
-                    <h4>Project Members</h4>
+                    <div className="d-flex justify-content-between">
+                      <h4>Project Members</h4>
+                      <PersonFillAdd
+                        size={36}
+                        data-projectid={pathId}
+                        color={ownerFeature ? "" : "gray"}
+                        onClick={(e) => refMember.current?.handleShow(e)}
+                        onMouseEnter={(e) =>
+                          e.currentTarget.classList.add("text-primary")
+                        }
+                        onMouseLeave={(e) =>
+                          e.currentTarget.classList.remove("text-primary")
+                        }
+                        style={{
+                          cursor: "pointer",
+                          pointerEvents: ownerFeature ? "auto" : "none",
+                        }}
+                      />
+                    </div>
                     {prjMembers?.map((member) => {
                       if (!member.isOwner)
                         return (
@@ -501,7 +564,6 @@ function Project() {
                               style={{ maxWidth: "35ch" }}
                             >
                               <h5>{member.name}</h5>
-                              {/* <span>{member.role}</span> */}
                               {rolesList
                                 .filter((elem) => elem._id === member?.role)
                                 .map((e) => (
