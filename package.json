@@ -24,6 +24,7 @@
     "react-table": "^7.8.0",
     "react-toastify": "^9.1.1",
     "socket.io-client": "^4.5.4",
+    "uuidv4": "^6.2.13",
     "yup": "^0.32.11"
   },
   "devDependencies": {

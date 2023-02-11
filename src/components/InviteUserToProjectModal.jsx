@@ -5,6 +5,7 @@ import { checkEmail } from "../api/auth";
 import { Button, Form, Image, Modal, Spinner } from "react-bootstrap";
 import { Formik } from "formik";
 import useAuth from "../hooks/useAuth";
+import { v4 as uuid } from "uuid";
 
 function AddByEmailModal(props, ref) {
   const [show, setShow] = useState(false);
@@ -141,7 +142,7 @@ function AddByEmailModal(props, ref) {
                   ></Form.Control>
                   <datalist id="teammates">
                     {userTeammates.map((mate) => (
-                      <option value={mate.email} key={mate.userId}></option>
+                      <option value={mate.email} key={uuid()}></option>
                     ))}
                   </datalist>
                   <div className="error-message">
@@ -157,7 +158,7 @@ function AddByEmailModal(props, ref) {
                     <div
                       id={`teammate-card-${index}`}
                       className="d-flex align-items-center border rounded bg-opacity-25"
-                      key={mate.userId}
+                      key={uuid()}
                       style={{
                         flexBasis: "calc(50% - 10px)",
                         minHeight: "60px",

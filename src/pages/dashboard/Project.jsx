@@ -18,6 +18,7 @@ import moment from "moment";
 import TaskDetailsModal from "../../components/TaskDetailsModal";
 import useAuth from "../../hooks/useAuth";
 import InviteUserToProjectModal from "../../components/InviteUserToProjectModal";
+import { v4 as uuid } from "uuid";
 // name, desc, isDone, status, dueDate, createdAt, owner, participants, tasks and actions edit, delete ...
 function Project() {
   const ref = useRef(null);
@@ -401,7 +402,7 @@ function Project() {
 
                         <div className="d-flex align-content-center">
                           {prjMembers?.map((member) => (
-                            <div className="team" key={member.userId}>
+                            <div className="team" key={uuid()}>
                               <Image
                                 className="rounded-circle profile-img border border-secondary"
                                 src={member.avatar}
@@ -410,10 +411,7 @@ function Project() {
                             </div>
                           ))}
 
-                          <div
-                            id="add-member"
-                            className="team"
-                          >
+                          <div id="add-member" className="team" key={uuid()}>
                             <Plus
                               className="border border-secondary rounded-circle"
                               size={60}
@@ -495,10 +493,7 @@ function Project() {
                 <Tab.Pane className="ms-3 mt-3" eventKey="members">
                   <div className="row mt-2">
                     <h4>Project Owner</h4>
-                    <div
-                      className="w-50 mt-2 d-flex"
-                      key={projectOwner?.userId}
-                    >
+                    <div className="w-50 mt-2 d-flex" key={uuid()}>
                       <div>
                         <Image
                           className="rounded-circle profile-img border border-secondary"
@@ -515,7 +510,7 @@ function Project() {
                         {rolesList
                           .filter((elem) => elem._id === projectOwner?.role)
                           .map((e) => (
-                            <>{e.name}</>
+                            <span key={uuid()}>{e.name}</span>
                           ))}
                       </div>
                     </div>
@@ -549,7 +544,7 @@ function Project() {
                     {prjMembers?.map((member) => {
                       if (!member.isOwner)
                         return (
-                          <div className="w-50 mt-2 d-flex" key={member.userId}>
+                          <div className="w-50 mt-2 d-flex" key={uuid()}>
                             <div>
                               <Image
                                 className="rounded-circle profile-img border border-secondary"
@@ -566,7 +561,7 @@ function Project() {
                               {rolesList
                                 .filter((elem) => elem._id === member?.role)
                                 .map((e) => (
-                                  <>{e.name}</>
+                                  <span key={uuid()}>{e.name}</span>
                                 ))}
                             </div>
                           </div>

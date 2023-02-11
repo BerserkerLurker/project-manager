@@ -5,6 +5,7 @@ import useApi from "../../hooks/useApi";
 import * as Yup from "yup";
 import { Formik } from "formik";
 import TaskDetailsModal from "../../components/TaskDetailsModal";
+import { v4 as uuid } from "uuid";
 
 // TODO - Change new task to use TaskDetailsModal
 function Tasks() {
@@ -120,7 +121,7 @@ function Tasks() {
                   >
                     <option>Open this select menu</option>
                     {projects.map((project) => (
-                      <option key={project.projectId} value={project.projectId}>
+                      <option key={uuid()} value={project.projectId}>
                         {project.projectName}
                       </option>
                     ))}
@@ -221,7 +222,7 @@ function Tasks() {
       <div className="mt-2">
         {badgeProps.map((project, index) => (
           <Badge
-            key={project.projectId}
+            key={uuid()}
             data-key={project.projectId}
             data-index={index}
             pill
@@ -238,14 +239,14 @@ function Tasks() {
         {badgeProps.map((project) => {
           if (!project.filterOut) {
             const pName = (
-              <Link to={`/project/${project.projectId}`}>
+              <Link to={`/project/${project.projectId}`} key={uuid()}>
                 {project.projectName}
               </Link>
             );
             const pTs = project.tasksL.map((task, index) => (
               <ListGroup.Item
                 as="li"
-                key={task.taskId}
+                key={uuid()}
                 onClick={() => {
                   setShowTaskDetailsModal(true);
                   setTaskModalData(task);
@@ -262,10 +263,10 @@ function Tasks() {
 
             if (pTs.length > 0) {
               return (
-                <>
+                <div key={uuid()}>
                   {pName}
                   {pTs}
-                </>
+                </div>
               );
             }
           }
