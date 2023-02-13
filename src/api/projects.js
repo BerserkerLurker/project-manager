@@ -137,3 +137,24 @@ export async function assignUserToProject(params) {
     throw error;
   }
 }
+
+export async function unassignUserFromProject(params) {
+  try {
+    const res = await jwtInterceptor.delete(
+      url + projectsUri + `/members/${params.projectId}`,
+      {
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${globalThis.targetProxy.accessToken}`,
+        },
+        data: {
+          ...params,
+        },
+      }
+    );
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}

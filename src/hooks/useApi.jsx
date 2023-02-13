@@ -11,6 +11,7 @@ import * as tasksApi from "../api/tasks";
 import * as rolesApi from "../api/roles";
 import * as teamsApi from "../api/teams";
 import useAuth from "./useAuth";
+import _ from "lodash";
 
 const ApiContext = createContext({});
 
@@ -403,6 +404,30 @@ export function ApiProvider(children) {
       .finally(() => setLoading(false));
   }
 
+  function unassignUserFromProject(params) {
+    setLoading(true);
+
+    return projectsApi
+      .unassignUserFromProject(params)
+      .then((resp) => {
+        if (resp.msg.includes("no longer")) {
+          let obj = projectsMembersObj;
+
+          const x = _.at(obj, params.projectId)[0];
+
+          // using User Email only
+          const y = _.filter(x, (user) => user.email !== params.memberEmail);
+
+          obj[params.projectId] = y;
+          console.log(obj);
+
+          setProjectsMembersObj(obj);
+        }
+      })
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false));
+  }
+
   const memoedValue = useMemo(
     () => ({
       projectsList,
@@ -430,6 +455,7 @@ export function ApiProvider(children) {
       updateTeamMember,
       removeTeamMember,
       assignUserToProject,
+      unassignUserFromProject,
     }),
     [projectsList, tasksList, projectsMembersObj, teamsList, loading, error]
   );

@@ -7,6 +7,7 @@ import {
   PersonFillAdd,
   Plus,
   Trash,
+  XCircleFill,
 } from "react-bootstrap-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTable } from "react-table";
@@ -52,6 +53,8 @@ function Project() {
     updateTask,
     // @ts-ignore
     projectsMembersObj,
+    // @ts-ignore
+    unassignUserFromProject,
   } = useApi();
 
   // @ts-ignore
@@ -61,7 +64,6 @@ function Project() {
   //   console.log(`${key}: ${value}`);
   // }
 
-  const pathId = location.pathname.split("/").at(-1);
   const pId = p.findIndex((o) => o.projectId === pathId);
 
   const [prjTasks, setPrjTasks] = useState([]);
@@ -74,7 +76,7 @@ function Project() {
     } else {
       setOwnerFeature(false);
     }
-  }, [pathId]);
+  }, [pathId, pId]);
 
   useEffect(() => {
     setPrjTasks(t.filter((task) => task.projectId === pathId));
@@ -82,7 +84,7 @@ function Project() {
 
   useEffect(() => {
     setPrjMembers(projectsMembersObj[pathId]);
-  }, [pathId, projectsMembersObj]);
+  }, [pathId, JSON.stringify(projectsMembersObj)]);
 
   const projectOwner = prjMembers?.find((m) => m.isOwner);
 
@@ -569,6 +571,19 @@ function Project() {
                                 .map((e) => (
                                   <span key={uuid()}>{e.name}</span>
                                 ))}
+                            </div>
+                            <div className="flex-grow-1 d-flex flex-row-reverse me-2 my-auto">
+                              <XCircleFill
+                                className="text-danger"
+                                size={24}
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                  unassignUserFromProject({
+                                    projectId: pathId,
+                                    memberEmail: member.email,
+                                  });
+                                }}
+                              />
                             </div>
                           </div>
                         );
