@@ -164,7 +164,8 @@ function AddByEmailModal(props, ref) {
                         minHeight: "60px",
                         cursor: "pointer",
                       }}
-                      onClick={(e) => {
+                      onClick={(event) => {
+                        event.stopPropagation();
                         setFieldValue("email", mate.email, true);
                         const cards = document.querySelectorAll(
                           "[id*='teammate-card']"
@@ -172,7 +173,7 @@ function AddByEmailModal(props, ref) {
                         cards.forEach((element) => {
                           element.classList.remove("bg-primary");
                         });
-                        e.currentTarget.classList.add("bg-primary");
+                        event.currentTarget.classList.add("bg-primary");
                       }}
                     >
                       <Image

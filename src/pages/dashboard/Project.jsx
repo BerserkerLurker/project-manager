@@ -21,10 +21,16 @@ import InviteUserToProjectModal from "../../components/InviteUserToProjectModal"
 import { v4 as uuid } from "uuid";
 // name, desc, isDone, status, dueDate, createdAt, owner, participants, tasks and actions edit, delete ...
 function Project() {
+  const location = useLocation();
+  // const pathId = location.pathname.split("/").at(-1);
+  const [pathId, setPathId] = useState(location.pathname.split("/").at(-1));
+  useEffect(() => {
+    setPathId(location.pathname.split("/").at(-1));
+  }, [location]);
+
   const ref = useRef(null);
   const refMember = useRef(null);
   const toastId = useRef(null);
-  const location = useLocation();
   const navigate = useNavigate();
   // const pIndex = location.state?.project?.projectId;
   const {
