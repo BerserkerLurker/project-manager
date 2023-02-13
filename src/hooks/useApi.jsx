@@ -63,7 +63,23 @@ export function ApiProvider(children) {
       tasksApi
         .getAllTasks()
         .then((tasks) => {
-          setTasksList(tasks);
+          // setTasksList(tasks);
+          // if (tasks.length) {
+          const ids = tasks.map((task) => task.taskId);
+          tasksApi.getTaskAssignees(ids).then((taskAssignees) => {
+            let updatedList = [...tasks];
+            taskAssignees.forEach((elem) => {
+              let taskId = Object.keys(elem)[0];
+              let index = tasks.findIndex((task) => task.taskId === taskId);
+              updatedList[index] = {
+                ...updatedList[index],
+                assignees: Object.values(elem)[0],
+              };
+            });
+
+            setTasksList(updatedList);
+          });
+          // }
         })
         .catch((error) => setError(error))
         .finally(() => setLoadingInitial(false));

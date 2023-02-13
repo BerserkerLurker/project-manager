@@ -1,18 +1,26 @@
 import { Formik } from "formik";
-import React, { useState } from "react";
-import { Form } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Form, Image } from "react-bootstrap";
 import { Check2Square, PencilFill } from "react-bootstrap-icons";
 import Modal from "react-bootstrap/Modal";
 import * as Yup from "yup";
 import useApi from "../hooks/useApi";
 import moment from "moment";
+import { v4 as uuid } from "uuid";
+import _ from "lodash";
 
 function TaskDetailsModal(props) {
   // @ts-ignore
-  const { updateTask } = useApi();
+  const { updateTask, projectsMembersObj: pMembers } = useApi();
   const [showForm, setShowForm] = useState(false);
+  const [x, setX] = useState([]);
 
   const task = props.data;
+  useEffect(() => {
+    setX(_.at(pMembers, [task.projectId])[0]);
+  });
+
+  console.log(x);
 
   function handleOnKeyDown(keyEvent) {
     if (keyEvent.key === "Enter") {
@@ -91,7 +99,9 @@ function TaskDetailsModal(props) {
                     className="d-flex align-items-baseline"
                   >
                     <span
-                      className={task.isDone && "text-decoration-line-through"}
+                      className={
+                        task.isDone ? "text-decoration-line-through" : ""
+                      }
                     >
                       {task.taskName}
                     </span>
@@ -124,137 +134,167 @@ function TaskDetailsModal(props) {
                 </div>
               </Modal.Header>
 
-              <Modal.Body>
-                {showForm && (
-                  <Form.Group controlId="formName">
-                    <Form.Label className="fw-bold">Name:</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="name"
-                      placeholder="Task name"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.name}
-                      onKeyDown={handleOnKeyDown}
-                    ></Form.Control>
-                    <div className="error-message">
-                      <>&nbsp;{touched.name && errors.name && errors.name}</>
-                    </div>
-                  </Form.Group>
-                )}
-
-                <Form.Group controlId="formDescription">
-                  <Form.Label className="fw-bold">Description:</Form.Label>
-                  {!showForm ? (
-                    <p>{task.description}</p>
-                  ) : (
-                    <>
+              <Modal.Body className="row">
+                <div className="col-7">
+                  {showForm && (
+                    <Form.Group controlId="formName">
+                      <Form.Label className="fw-bold">Name:</Form.Label>
                       <Form.Control
                         type="text"
-                        as="textarea"
-                        rows={3}
-                        name="description"
-                        placeholder="Descripe your task"
+                        name="name"
+                        placeholder="Task name"
                         onChange={handleChange}
                         onBlur={handleBlur}
-                        value={values.description}
-                      ></Form.Control>
-                      <div className="error-message">&nbsp;</div>
-                    </>
-                  )}
-                </Form.Group>
-
-                <Form.Group controlId="formStatus">
-                  <Form.Label className="fw-bold">Status:</Form.Label>
-                  {!showForm ? (
-                    <p>{task.status}</p>
-                  ) : (
-                    <>
-                      <Form.Select
-                        name="status"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.status}
-                      >
-                        <option>Open this select menu</option>
-                        <option value="onTrack">On Track</option>
-                        <option value="atRisk">At Risk</option>
-                        <option value="offTrack">Off Track</option>
-                      </Form.Select>
-                      <div className="error-message">
-                        <>
-                          &nbsp;
-                          {touched.status && errors.status && errors.status}
-                        </>
-                      </div>
-                    </>
-                  )}
-                </Form.Group>
-
-                <Form.Group controlId="formPriority">
-                  <Form.Label className="fw-bold">Priority:</Form.Label>
-                  {!showForm ? (
-                    <p>{task.priority}</p>
-                  ) : (
-                    <>
-                      <Form.Select
-                        name="priority"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.priority}
-                      >
-                        <option>Open this select menu</option>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                      </Form.Select>
-                      <div className="error-message">
-                        <>
-                          &nbsp;
-                          {touched.priority &&
-                            errors.priority &&
-                            errors.priority}
-                        </>
-                      </div>
-                    </>
-                  )}
-                </Form.Group>
-
-                <Form.Group controlId="formDate">
-                  <Form.Label className="fw-bold">Due Date:</Form.Label>
-                  {!showForm ? (
-                    <p>{new Date(task.dueDate).toLocaleString()}</p>
-                  ) : (
-                    <>
-                      <Form.Control
-                        type="datetime-local"
-                        name="dueDate"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.dueDate}
+                        value={values.name}
+                        onKeyDown={handleOnKeyDown}
                       ></Form.Control>
                       <div className="error-message">
-                        &nbsp;
-                        {touched.dueDate && errors.dueDate && errors.dueDate}
+                        <>&nbsp;{touched.name && errors.name && errors.name}</>
                       </div>
-                    </>
+                    </Form.Group>
                   )}
-                </Form.Group>
 
-                {showForm && (
-                  <Form.Group controlId="formIsDone">
-                    <Form.Label className="fw-bold">Progress:</Form.Label>
-                    <Form.Check
-                      checked={values.isDone}
-                      label="Finished"
-                      type="checkbox"
-                      name="isDone"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.isDone}
-                    ></Form.Check>
+                  <Form.Group controlId="formDescription">
+                    <Form.Label className="fw-bold">Description:</Form.Label>
+                    {!showForm ? (
+                      <p>{task.description}</p>
+                    ) : (
+                      <>
+                        <Form.Control
+                          type="text"
+                          as="textarea"
+                          rows={3}
+                          name="description"
+                          placeholder="Descripe your task"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.description}
+                        ></Form.Control>
+                        <div className="error-message">&nbsp;</div>
+                      </>
+                    )}
                   </Form.Group>
-                )}
+
+                  <Form.Group controlId="formStatus">
+                    <Form.Label className="fw-bold">Status:</Form.Label>
+                    {!showForm ? (
+                      <p>{task.status}</p>
+                    ) : (
+                      <>
+                        <Form.Select
+                          name="status"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.status}
+                        >
+                          <option>Open this select menu</option>
+                          <option value="onTrack">On Track</option>
+                          <option value="atRisk">At Risk</option>
+                          <option value="offTrack">Off Track</option>
+                        </Form.Select>
+                        <div className="error-message">
+                          <>
+                            &nbsp;
+                            {touched.status && errors.status && errors.status}
+                          </>
+                        </div>
+                      </>
+                    )}
+                  </Form.Group>
+
+                  <Form.Group controlId="formPriority">
+                    <Form.Label className="fw-bold">Priority:</Form.Label>
+                    {!showForm ? (
+                      <p>{task.priority}</p>
+                    ) : (
+                      <>
+                        <Form.Select
+                          name="priority"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.priority}
+                        >
+                          <option>Open this select menu</option>
+                          <option value="low">Low</option>
+                          <option value="medium">Medium</option>
+                          <option value="high">High</option>
+                        </Form.Select>
+                        <div className="error-message">
+                          <>
+                            &nbsp;
+                            {touched.priority &&
+                              errors.priority &&
+                              errors.priority}
+                          </>
+                        </div>
+                      </>
+                    )}
+                  </Form.Group>
+
+                  <Form.Group controlId="formDate">
+                    <Form.Label className="fw-bold">Due Date:</Form.Label>
+                    {!showForm ? (
+                      <p>{new Date(task.dueDate).toLocaleString()}</p>
+                    ) : (
+                      <>
+                        <Form.Control
+                          type="datetime-local"
+                          name="dueDate"
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={values.dueDate}
+                        ></Form.Control>
+                        <div className="error-message">
+                          &nbsp;
+                          {touched.dueDate && errors.dueDate && errors.dueDate}
+                        </div>
+                      </>
+                    )}
+                  </Form.Group>
+
+                  {showForm && (
+                    <Form.Group controlId="formIsDone">
+                      <Form.Label className="fw-bold">Progress:</Form.Label>
+                      <Form.Check
+                        checked={values.isDone}
+                        label="Finished"
+                        type="checkbox"
+                        name="isDone"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.isDone}
+                      ></Form.Check>
+                    </Form.Group>
+                  )}
+                </div>
+                <div className="col-5">
+                  <span className="fw-bold">Assignees:</span>
+                  <div className="d-flex flex-wrap">
+                    {task.assignees.map((user) => (
+                      <div
+                        className=" mt-2 me-2 d-flex align-items-center"
+                        key={uuid()}
+                      >
+                        <div>
+                          <Image
+                            className="rounded-circle profile-img border border-secondary"
+                            src={user.avatar}
+                            alt="user pic"
+                          />
+                        </div>
+                        &nbsp;
+                        <div
+                          className="text-truncate"
+                          style={{ maxWidth: "35ch" }}
+                        >
+                          <h5>{user.name}</h5>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {showForm &&
+                    x.map((y) => <div key={uuid()}>{y.email}</div>)}
+                </div>
               </Modal.Body>
             </Form>
           </>
