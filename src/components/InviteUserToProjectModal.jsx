@@ -158,7 +158,7 @@ function AddByEmailModal(props, ref) {
                     <div
                       id={`teammate-card-${index}`}
                       className="d-flex align-items-center border rounded bg-opacity-25"
-                      key={uuid()}
+                      key={`teammate-card-${index}`}
                       style={{
                         flexBasis: "calc(50% - 10px)",
                         minHeight: "60px",
