@@ -272,13 +272,13 @@ export function ApiProvider(children) {
     return tasksApi
       .updateTask(params)
       .then((task) => {
-        console.log("api res: " + JSON.stringify(task));
-        console.log(
-          "local val: " +
-            JSON.stringify(
-              tasksList[tasksList.findIndex((o) => o.taskId === task.taskId)]
-            )
-        );
+        // console.log("api res: " + JSON.stringify(task));
+        // console.log(
+        //   "local val: " +
+        //     JSON.stringify(
+        //       tasksList[tasksList.findIndex((o) => o.taskId === task.taskId)]
+        //     )
+        // );
         const updatedData = [...tasksList];
         updatedData[updatedData.findIndex((o) => o.taskId === task.taskId)] =
           task;
@@ -286,6 +286,22 @@ export function ApiProvider(children) {
       })
       .catch((error) => setError(error))
       .finally(() => setLoading(false));
+  }
+
+  function deleteTask(params) {
+    setLoading(true);
+
+    return tasksApi
+      .deleteTask(params)
+      .then((task) => {
+        let updatedData = [...tasksList];
+        const index = updatedData.findIndex((o) => o.taskId === task._id);
+        updatedData.splice(index, 1);
+
+        setTasksList(updatedData);
+      })
+      .catch((error) => setError(error))
+      .then(() => setLoading(false));
   }
 
   function getAllRoles() {
@@ -428,6 +444,51 @@ export function ApiProvider(children) {
       .finally(() => setLoading(false));
   }
 
+  function assignUserToTask(params) {
+    setLoading(true);
+
+    return tasksApi
+      .assignUserToTask(params)
+      .then((assignee) => {
+        const index = _.findIndex(tasksList, (task) =>
+          _.includes(task, assignee.taskId)
+        );
+        const updatedlist = [...tasksList];
+        updatedlist[index].assignees.push(assignee);
+        setTasksList(updatedlist);
+        return assignee;
+      })
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false));
+  }
+
+  function unassignUserFromTask(params) {
+    setLoading(true);
+
+    return tasksApi
+      .unassignUserFromTask(params)
+      .then((resp) => {
+        if (resp.msg.includes("no longer")) {
+          const index = _.findIndex(tasksList, (task) =>
+            _.includes(task, params.taskId)
+          );
+          const updatedlist = [...tasksList];
+          const filtered = [...updatedlist[index].assignees].filter(
+            (assignee) => {
+              console.log(assignee);
+              return assignee.email !== params.assigneeEmail;
+            }
+          );
+          console.log(filtered);
+          updatedlist[index].assignees = [...filtered];
+          setTasksList(updatedlist);
+          return resp;
+        }
+      })
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false));
+  }
+
   const memoedValue = useMemo(
     () => ({
       projectsList,
@@ -448,6 +509,7 @@ export function ApiProvider(children) {
       getAllTasks,
       createTask,
       updateTask,
+      deleteTask,
       getAllRoles,
       getAllTeams,
       createTeam,
@@ -456,6 +518,8 @@ export function ApiProvider(children) {
       removeTeamMember,
       assignUserToProject,
       unassignUserFromProject,
+      assignUserToTask,
+      unassignUserFromTask,
     }),
     [projectsList, tasksList, projectsMembersObj, teamsList, loading, error]
   );

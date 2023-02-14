@@ -208,30 +208,18 @@ function Project() {
       },
       {
         Header: "Assignee",
-        accessor: "",
-        Cell: () => (
+        accessor: "assignees",
+        Cell: (props) => (
           <div className="d-flex">
-            <div className="teamstatic">
-              <Image
-                className="rounded-circle profile-img border border-secondary"
-                src="https://picsum.photos/60"
-                alt="user pic"
-              />
-            </div>
-            <div className="teamstatic">
-              <Image
-                className="rounded-circle profile-img border border-secondary"
-                src="https://picsum.photos/60"
-                alt="user pic"
-              />
-            </div>
-            <div className="teamstatic">
-              <Image
-                className="rounded-circle profile-img border border-secondary"
-                src="https://picsum.photos/60"
-                alt="user pic"
-              />
-            </div>
+            {props.value.map((elem) => (
+              <div className="teamstatic" key={uuid()}>
+                <Image
+                  className="rounded-circle profile-img border border-secondary"
+                  src={elem.avatar}
+                  alt="user pic"
+                />
+              </div>
+            ))}
           </div>
         ),
       },
@@ -274,7 +262,7 @@ function Project() {
                 onClick={() => {
                   setShowTaskDetailsModal(true);
                   setTaskModalData(row.original);
-                  console.log(row.original);
+                  // console.log(row.original);
                 }}
               >
                 {row.cells.map((cell) => {
@@ -334,7 +322,7 @@ function Project() {
             show={showConfirmDeleteModal}
             onHide={() => setShowConfirmDeleteModal(false)}
             data={{
-              projectName: p[pId].projectName,
+              projectName: p[pId]?.projectName,
               handler: deleteProjectHandler,
             }}
           />
