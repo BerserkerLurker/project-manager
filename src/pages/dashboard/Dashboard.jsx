@@ -1,13 +1,42 @@
-import React from "react";
-import { Container, ListGroup } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Container, ListGroup, Tab, Tabs } from "react-bootstrap";
 import { Link, Outlet, useLocation } from "react-router-dom";
+import TaskDetailsModal from "../../components/TaskDetailsModal";
 import useApi from "../../hooks/useApi";
 import SideNav from "./SideNav";
 
 function Dashboard() {
   const pathname = useLocation().pathname;
   // @ts-ignore
-  const { projectsList: list } = useApi();
+  const { projectsList, tasksList } = useApi();
+
+  const [doneTasks, setDoneTasks] = useState([]);
+  const [overDueTasks, setOverDueTasks] = useState([]);
+  const [upcomingTasks, setUpcomingTasks] = useState([]);
+
+  const [showTaskDetailsModal, setShowTaskDetailsModal] = useState(false);
+  const [taskModalData, setTaskModalData] = useState({});
+
+  useEffect(() => {
+    const done = [];
+    const overdue = [];
+    const upcoming = [];
+    tasksList.forEach((task) => {
+      if (task.isDone) {
+        done.push(task);
+        return;
+      } else if (new Date(task.dueDate) < new Date()) {
+        overdue.push(task);
+        return;
+      } else {
+        upcoming.push(task);
+        return;
+      }
+    });
+    setDoneTasks(done);
+    setOverDueTasks(overdue);
+    setUpcomingTasks(upcoming);
+  }, [tasksList]);
 
   return (
     <Container fluid>
@@ -60,18 +89,144 @@ function Dashboard() {
             </ol>
           </nav>
 
-          <ListGroup as="ol" variant="flush">
-            {location.pathname === "/" &&
-              list.map((project, index) => {
-                return (
-                  <ListGroup.Item as="li" key={index}>
-                    <Link to={`/project/${project.projectId}`}>
-                      {project.projectName}
+          {location.pathname === "/" && (
+            <div className="row gap-xl-3 mx-xl-1 pe-2">
+              <div className="col mb-4 py-2 px-0 border rounded">
+                <h4 className="ms-3">My Tasks:</h4>
+
+                <TaskDetailsModal
+                  size={"lg"}
+                  centered
+                  show={showTaskDetailsModal}
+                  onHide={() => setShowTaskDetailsModal(false)}
+                  data={taskModalData}
+                />
+
+                <Tabs
+                  defaultActiveKey="upcoming"
+                  id="tasks-overview"
+                  className=""
+                  fill
+                >
+                  <Tab
+                    eventKey="upcoming"
+                    title={`Upcoming(${upcomingTasks.length})`}
+                    style={{
+                      height: "250px",
+                      overflowY: "auto",
+                      overflowX: "hidden",
+                    }}
+                  >
+                    <ListGroup as="ol" variant="flush">
+                      {upcomingTasks.map((task, index) => {
+                        return (
+                          <ListGroup.Item
+                            as="li"
+                            key={`task-${index}`}
+                            onClick={() => {
+                              setShowTaskDetailsModal(true);
+                              setTaskModalData(task);
+                            }}
+                          >
+                            <Link to="" className="ms-2">
+                              {task.taskName}
+                            </Link>
+                          </ListGroup.Item>
+                        );
+                      })}
+                    </ListGroup>
+                  </Tab>
+                  <Tab
+                    eventKey="done"
+                    title={`Completed(${doneTasks.length})`}
+                    style={{
+                      height: "250px",
+                      overflowY: "auto",
+                      overflowX: "hidden",
+                    }}
+                  >
+                    <ListGroup as="ol" variant="flush">
+                      {doneTasks.map((task, index) => {
+                        return (
+                          <ListGroup.Item
+                            as="li"
+                            key={`task-${index}`}
+                            onClick={() => {
+                              setShowTaskDetailsModal(true);
+                              setTaskModalData(task);
+                            }}
+                          >
+                            <Link to="" className="ms-2">
+                              {task.taskName}
+                            </Link>
+                          </ListGroup.Item>
+                        );
+                      })}
+                    </ListGroup>
+                  </Tab>
+                  <Tab
+                    eventKey="overdue"
+                    title={`Overdue(${overDueTasks.length})`}
+                    style={{
+                      height: "250px",
+                      overflowY: "auto",
+                      overflowX: "hidden",
+                    }}
+                  >
+                    <ListGroup as="ol" variant="flush">
+                      {overDueTasks.map((task, index) => {
+                        return (
+                          <ListGroup.Item
+                            as="li"
+                            key={`task-${index}`}
+                            onClick={() => {
+                              setShowTaskDetailsModal(true);
+                              setTaskModalData(task);
+                            }}
+                          >
+                            <Link to="" className="ms-2">
+                              {task.taskName}
+                            </Link>
+                          </ListGroup.Item>
+                        );
+                      })}
+                    </ListGroup>
+                  </Tab>
+                </Tabs>
+              </div>
+              <div className="col-xl-6 mb-4 py-2 px-0 border rounded">
+                <h4 className="ms-3">My Projects:</h4>
+                <ListGroup
+                  as="ol"
+                  variant="flush"
+                  style={{
+                    maxHeight: "300px",
+                    overflowY: "auto",
+                    overflowX: "hidden",
+                  }}
+                >
+                  <ListGroup.Item as="li" key={`new-project-0`}>
+                    <Link to={`/newproject`} className="ms-2">
+                      Create project
                     </Link>
                   </ListGroup.Item>
-                );
-              })}
-          </ListGroup>
+                  {projectsList.map((project, index) => {
+                    return (
+                      <ListGroup.Item as="li" key={`project-${index}`}>
+                        <Link
+                          to={`/project/${project.projectId}`}
+                          className="ms-2"
+                        >
+                          {project.projectName}
+                        </Link>
+                      </ListGroup.Item>
+                    );
+                  })}
+                </ListGroup>
+              </div>
+            </div>
+          )}
+
           <Outlet />
         </div>
       </div>

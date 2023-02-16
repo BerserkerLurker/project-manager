@@ -77,7 +77,6 @@ function TaskDetailsModal(props) {
       plus.classList.remove("visually-hidden");
       loader.classList.add("visually-hidden");
     }
-
   };
 
   const handleUnassignUser = (userEmail, userId) => {
@@ -177,16 +176,19 @@ function TaskDetailsModal(props) {
                         />
                         &nbsp;&nbsp;
                         {showForm && (
-                          <Check2Square
-                            disabled={isSubmitting}
-                            style={
-                              isSubmitting
-                                ? { pointerEvents: "none", color: "gray" }
-                                : { cursor: "pointer", color: "green" }
-                            }
-                            // @ts-ignore
-                            onClick={handleSubmit}
-                          />
+                          <>
+                            <Check2Square
+                              disabled={isSubmitting}
+                              style={
+                                isSubmitting
+                                  ? { pointerEvents: "none", color: "gray" }
+                                  : { cursor: "pointer", color: "green" }
+                              }
+                              // @ts-ignore
+                              onClick={handleSubmit}
+                            />
+                            &nbsp;&nbsp;
+                          </>
                         )}
                         {task.isOwner && (
                           <Trash
