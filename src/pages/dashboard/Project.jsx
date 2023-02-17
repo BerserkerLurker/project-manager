@@ -77,6 +77,32 @@ function Project() {
     setPrjTasks(t.filter((task) => task.projectId === pathId));
   }, [pathId, t]);
 
+  const [doneTasks, setDoneTasks] = useState([]);
+  const [notDoneTasks, setNotDoneTasks] = useState([]);
+  const [overDueTasks, setOverDueTasks] = useState([]);
+
+  useEffect(() => {
+    const done = [];
+    const notdone = [];
+    const overdue = [];
+    prjTasks.forEach((task) => {
+      if (task.isDone) {
+        done.push(task);
+        return;
+      } else if (!task.isDone) {
+        notdone.push(task);
+        if (new Date(task.dueDate) < new Date()) {
+          overdue.push(task);
+          return;
+        }
+        return;
+      }
+    });
+    setDoneTasks(done);
+    setNotDoneTasks(notdone);
+    setOverDueTasks(overdue);
+  }, [prjTasks]);
+
   useEffect(() => {
     setPrjMembers(projectsMembersObj[pathId]);
   }, [pathId, JSON.stringify(projectsMembersObj)]);
@@ -395,16 +421,28 @@ function Project() {
                     <div className="col-lg-3">
                       <div className="mb-3">
                         <h3>Status:</h3>
-                        <div className="border border-2 rounded-2 overflow-hidden ">
-                          <div className="border-bottom text-center bg-light">
-                            <h5 className="mb-0 p-2">{p[pId].status}</h5>
+                        <div className="text-center border border-2 rounded-2">
+                          <div
+                            className={
+                              p[pId].status === "onTrack"
+                                ? "bg-success text-light"
+                                : p[pId].status === "atRisk"
+                                ? "bg-warning"
+                                : p[pId].status === "offTrack"
+                                ? "bg-danger text-light"
+                                : "bg-light"
+                            }
+                          >
+                            <h5 className="mb-0 p-2">
+                              {p[pId].status === "onTrack"
+                                ? "On Track"
+                                : p[pId].status === "atRisk"
+                                ? "At Risk"
+                                : p[pId].status === "offTrack"
+                                ? "Off Track"
+                                : "Unknown"}
+                            </h5>
                           </div>
-                          <p className="m-2">
-                            Lorem ipsum, dolor sit amet consectetur adipisicing
-                            elit. Quo odit voluptates vitae nihil eius itaque
-                            incidunt sequi. Est odit excepturi libero incidunt
-                            voluptate?
-                          </p>
                         </div>
                       </div>
 
@@ -426,9 +464,35 @@ function Project() {
                           <p className="d-inline-block fw-bold small">
                             &nbsp;&nbsp;
                             {projectOwner?.name}
-                            {/* // TODO - need to query userProjects */}
                           </p>
                         </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-6 col-lg-3 mt-2">
+                      <div className="border rounded p-2">
+                        <h5>Completed tasks</h5>
+                        <div className="display-6">{doneTasks.length}</div>
+                      </div>
+                    </div>
+                    <div className="col-6 col-lg-3 mt-2">
+                      <div className="border rounded p-2">
+                        <h5>Incomplete tasks</h5>
+                        <div className="display-6">{notDoneTasks.length}</div>
+                      </div>
+                    </div>
+                    <div className="col-6 col-lg-3 mt-2">
+                      <div className="border rounded p-2">
+                        <h5>Overdue tasks</h5>
+
+                        <div className="display-6">{overDueTasks.length}</div>
+                      </div>
+                    </div>
+                    <div className="col-6 col-lg-3 mt-2">
+                      <div className="border rounded p-2">
+                        <h5>Total tasks</h5>
+                        <div className="display-6">{prjTasks.length}</div>
                       </div>
                     </div>
                   </div>
