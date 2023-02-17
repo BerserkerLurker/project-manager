@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Container, Image, Nav, Row, Tab } from "react-bootstrap";
-import BTable from "react-bootstrap/Table";
 import {
   CheckCircle,
   PencilSquare,
@@ -10,7 +9,7 @@ import {
   XCircleFill,
 } from "react-bootstrap-icons";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useTable } from "react-table";
+import Table from "../../components/table/Table";
 import { toast } from "react-toastify";
 import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
 import EditModal from "../../components/EditModal";
@@ -20,7 +19,7 @@ import TaskDetailsModal from "../../components/TaskDetailsModal";
 import useAuth from "../../hooks/useAuth";
 import InviteUserToProjectModal from "../../components/InviteUserToProjectModal";
 import { v4 as uuid } from "uuid";
-// name, desc, isDone, status, dueDate, createdAt, owner, participants, tasks and actions edit, delete ...
+
 function Project() {
   const location = useLocation();
   // const pathId = location.pathname.split("/").at(-1);
@@ -59,10 +58,6 @@ function Project() {
 
   // @ts-ignore
   const { user } = useAuth();
-
-  // for (let [key, value] of Object.entries(projectsMembersObj)) {
-  //   console.log(`${key}: ${value}`);
-  // }
 
   const pId = p.findIndex((o) => o.projectId === pathId);
 
@@ -108,30 +103,43 @@ function Project() {
 
   const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
 
+  const CheckBoxCell = ({
+    value,
+    column: { id },
+    row: {
+      index,
+      original: { taskId, taskName },
+    },
+    updateMyData,
+  }) => {
+    const handleOnClick = () => {
+      updateMyData(index, id, taskId, taskName, !value);
+    };
+
+    return (
+      <CheckCircle
+        style={{ cursor: "pointer" }}
+        size={24}
+        color={value ? "green" : "gray"}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleOnClick();
+        }}
+      />
+    );
+  };
+
   const columns = useMemo(
     () => [
       {
+        Header: "",
+        accessor: "isDone",
+        Cell: CheckBoxCell,
+      },
+      {
         Header: "Task name",
         accessor: "taskName",
-        Cell: (props) => (
-          <>
-            <CheckCircle
-              style={{ cursor: "pointer" }}
-              size={24}
-              color={props.cell.row.original.isDone ? "green" : "gray"}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleTaskCheck(
-                  props.cell.row.original.isDone,
-                  props.cell.row.original.taskId,
-                  props.cell.row.original.taskName
-                );
-              }}
-            />
-            &nbsp;&nbsp;&nbsp;
-            <span>{props.value}</span>
-          </>
-        ),
+        Cell: (props) => <span>{props.value}</span>,
       },
       {
         Header: "Status",
@@ -207,11 +215,11 @@ function Project() {
         ),
       },
       {
-        Header: "Assignee",
+        Header: "Assignees",
         accessor: "assignees",
         Cell: (props) => (
           <div className="d-flex">
-            {props.value.map((elem) => (
+            {props.value?.map((elem) => (
               <div className="teamstatic" key={uuid()}>
                 <Image
                   className="rounded-circle profile-img border border-secondary"
@@ -229,53 +237,15 @@ function Project() {
 
   const data = useMemo(() => prjTasks, [prjTasks]);
 
-  const Table = ({ columns, data }) => {
-    // const [records, setRecords] = useState(data);
+  const updateMyData = (rowIndex, columnId, taskId, taskName, value) => {
+    if (columnId === "isDone") {
+      handleTaskCheck(value, taskId, taskName);
+    }
+  };
 
-    // const getRowId = useCallback(row => {return row.id},[])
-
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-      useTable({ data, columns });
-
-    return (
-      <BTable
-        responsive
-        className={data.length ? "table-hover" : "d-none"}
-        {...getTableProps()}
-      >
-        <thead className="table-light">
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody className="table-group-divider" {...getTableBodyProps()}>
-          {rows.map((row, i) => {
-            prepareRow(row);
-            return (
-              <tr
-                style={{ cursor: "pointer" }}
-                {...row.getRowProps()}
-                onClick={() => {
-                  setShowTaskDetailsModal(true);
-                  setTaskModalData(row.original);
-                  // console.log(row.original);
-                }}
-              >
-                {row.cells.map((cell) => {
-                  return (
-                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </BTable>
-    );
+  const displayTaskModal = (show, data) => {
+    setShowTaskDetailsModal(show);
+    setTaskModalData(data);
   };
 
   const deleteProjectHandler = () => {
@@ -285,7 +255,6 @@ function Project() {
         toast.success(`Project ${p[pId].projectName} deleted successfully!!`);
       })
       .catch((error) => {
-        console.log(error);
         if (error.response.status >= 500) {
           toast.error("Something went wrong. Try again later.");
         } else {
@@ -295,7 +264,7 @@ function Project() {
   };
 
   const handleTaskCheck = (isdone, taskId, taskName) => {
-    updateTask({ id: taskId, isDone: !isdone }).then(() => {
+    updateTask({ id: taskId, isDone: isdone }).then(() => {
       const noti = () =>
         (toastId.current = toast.info(
           `${taskName} ${!isdone ? "done ✔" : "updated"}`,
@@ -483,7 +452,12 @@ function Project() {
                     animation={false}
                   />
 
-                  <Table columns={columns} data={data} />
+                  <Table
+                    columns={columns}
+                    data={data}
+                    updateMyData={updateMyData}
+                    displayTaskModal={displayTaskModal}
+                  />
                 </Tab.Pane>
 
                 <Tab.Pane className="ms-3 mt-3" eventKey="members">
