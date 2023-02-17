@@ -19,6 +19,8 @@ import TaskDetailsModal from "../../components/TaskDetailsModal";
 import useAuth from "../../hooks/useAuth";
 import InviteUserToProjectModal from "../../components/InviteUserToProjectModal";
 import { v4 as uuid } from "uuid";
+import DoughnutChart from "../../components/chart/DoughnutChart";
+import BarChart from "../../components/chart/BarChart";
 
 function Project() {
   const location = useLocation();
@@ -493,6 +495,23 @@ function Project() {
                       <div className="border rounded p-2">
                         <h5>Total tasks</h5>
                         <div className="display-6">{prjTasks.length}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="d-flex justify-content-around flex-wrap">
+                      <div >
+                        <DoughnutChart
+                          {...{
+                            completed: doneTasks.length,
+                            incomplete: notDoneTasks.length,
+                            overdue: overDueTasks.length,
+                            total: prjTasks.length,
+                          }}
+                        />
+                      </div>
+                      <div className="pt-5">
+                        <BarChart tasks={prjTasks} members={prjMembers} />
                       </div>
                     </div>
                   </div>
