@@ -42,64 +42,43 @@ export function ApiProvider(children) {
   useEffect(() => {
     if (user !== undefined && user !== null) {
       setLoadingInitial(true);
-      projectsApi
-        .getAllProjects()
-        .then((projects) => {
+
+      const fetchData = async () => {
+        try {
+          const projects = await projectsApi.getAllProjects();
           setProjectsList(projects);
 
-          projectsApi
-            .getAllProjectsAssignees(
-              projects.map((project) => project.projectId)
-            )
-            .then((projectsMembers) => {
-              // console.log(projectsMembers);
-              setProjectsMembersObj(projectsMembers);
-            })
-            .catch((error) => setError(error))
-            .finally(() => setLoadingInitial(false));
-        })
-        .catch((error) => setError(error))
-        .finally(() => setLoadingInitial(false));
+          const projectsMembers = await projectsApi.getAllProjectsAssignees(
+            projects.map((project) => project.projectId)
+          );
+          setProjectsMembersObj(projectsMembers);
 
-      tasksApi
-        .getAllTasks()
-        .then((tasks) => {
-          // setTasksList(tasks);
-          // if (tasks.length) {
+          const tasks = await tasksApi.getAllTasks();
           const ids = tasks.map((task) => task.taskId);
-          tasksApi.getTaskAssignees(ids).then((taskAssignees) => {
-            let updatedList = [...tasks];
-            taskAssignees.forEach((elem) => {
-              let taskId = Object.keys(elem)[0];
-              let index = tasks.findIndex((task) => task.taskId === taskId);
-              updatedList[index] = {
-                ...updatedList[index],
-                assignees: Object.values(elem)[0],
-              };
-            });
-
-            setTasksList(updatedList);
+          const taskAssignees = await tasksApi.getTaskAssignees(ids);
+          let updatedList = [...tasks];
+          taskAssignees.forEach((elem) => {
+            let taskId = Object.keys(elem)[0];
+            let index = tasks.findIndex((task) => task.taskId === taskId);
+            updatedList[index] = {
+              ...updatedList[index],
+              assignees: Object.values(elem)[0],
+            };
           });
-          // }
-        })
-        .catch((error) => setError(error))
-        .finally(() => setLoadingInitial(false));
+          setTasksList(updatedList);
 
-      rolesApi
-        .getAllRoles()
-        .then((roles) => {
+          const roles = await rolesApi.getAllRoles();
           setRolesList(roles);
-        })
-        .catch((error) => setError(error))
-        .finally(() => setLoadingInitial(false));
 
-      teamsApi
-        .getAllTeams()
-        .then((teams) => {
+          const teams = await teamsApi.getAllTeams();
           setTeamsList(teams);
-        })
-        .catch((error) => setError(error))
-        .finally(() => setLoadingInitial(false));
+
+          setLoadingInitial(false);
+        } catch (error) {
+          setError(error);
+        }
+      };
+      fetchData();
     } else {
       setLoadingInitial(false);
     }
@@ -260,6 +239,7 @@ export function ApiProvider(children) {
         const updatedData = [...tasksList];
         updatedData.push(task);
 
+        // TODO - push assign user before setting list
         setTasksList(updatedData);
       })
       .catch((error) => setError(error))
@@ -280,8 +260,10 @@ export function ApiProvider(children) {
         //     )
         // );
         const updatedData = [...tasksList];
-        updatedData[updatedData.findIndex((o) => o.taskId === task.taskId)] =
-          task;
+        const index = updatedData.findIndex((o) => o.taskId === task.taskId);
+        // console.log(index);
+        updatedData[index] = { ...updatedData[index], ...task };
+        // console.log("api: ", updatedData[index], task);
         setTasksList(updatedData);
       })
       .catch((error) => setError(error))
