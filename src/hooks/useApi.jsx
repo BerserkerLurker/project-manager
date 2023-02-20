@@ -265,8 +265,12 @@ export function ApiProvider(children) {
         updatedData[index] = { ...updatedData[index], ...task };
         // console.log("api: ", updatedData[index], task);
         setTasksList(updatedData);
+        return task;
       })
-      .catch((error) => setError(error))
+      .catch((error) => {
+        setError(error);
+        throw error;
+      })
       .finally(() => setLoading(false));
   }
 
