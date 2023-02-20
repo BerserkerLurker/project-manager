@@ -473,26 +473,26 @@ function Project() {
                   </div>
                   <div className="row">
                     <div className="col-6 col-lg-3 mt-2">
-                      <div className="border rounded p-2">
+                      <div className="border rounded p-2 shadow">
                         <h5>Completed tasks</h5>
                         <div className="display-6">{doneTasks.length}</div>
                       </div>
                     </div>
                     <div className="col-6 col-lg-3 mt-2">
-                      <div className="border rounded p-2">
+                      <div className="border rounded p-2 shadow">
                         <h5>Incomplete tasks</h5>
                         <div className="display-6">{notDoneTasks.length}</div>
                       </div>
                     </div>
                     <div className="col-6 col-lg-3 mt-2">
-                      <div className="border rounded p-2">
+                      <div className="border rounded p-2 shadow">
                         <h5>Overdue tasks</h5>
 
                         <div className="display-6">{overDueTasks.length}</div>
                       </div>
                     </div>
                     <div className="col-6 col-lg-3 mt-2">
-                      <div className="border rounded p-2">
+                      <div className="border rounded p-2 shadow">
                         <h5>Total tasks</h5>
                         <div className="display-6">{prjTasks.length}</div>
                       </div>
@@ -500,7 +500,7 @@ function Project() {
                   </div>
                   <div className="row">
                     <div className="d-flex justify-content-around flex-wrap">
-                      <div >
+                      <div>
                         <DoughnutChart
                           {...{
                             completed: doneTasks.length,
@@ -546,25 +546,27 @@ function Project() {
                 <Tab.Pane className="ms-3 mt-3" eventKey="members">
                   <div className="row mt-2">
                     <h4>Project Owner</h4>
-                    <div className="w-50 mt-2 d-flex" key={uuid()}>
-                      <div>
-                        <Image
-                          className="rounded-circle profile-img border border-secondary"
-                          src={projectOwner?.avatar}
-                          alt="user pic"
-                        />
-                      </div>
-                      &nbsp;
-                      <div
-                        className="text-truncate"
-                        style={{ maxWidth: "35ch" }}
-                      >
-                        <h5>{projectOwner?.name}</h5>
-                        {rolesList
-                          .filter((elem) => elem._id === projectOwner?.role)
-                          .map((e) => (
-                            <span key={uuid()}>{e.name}</span>
-                          ))}
+                    <div className="w-50 mt-2" key={uuid()}>
+                      <div className="d-flex p-2 border rounded shadow-sm">
+                        <div>
+                          <Image
+                            className="rounded-circle profile-img border border-secondary"
+                            src={projectOwner?.avatar}
+                            alt="user pic"
+                          />
+                        </div>
+                        &nbsp;
+                        <div
+                          className="text-truncate"
+                          style={{ maxWidth: "35ch" }}
+                        >
+                          <h5>{projectOwner?.name}</h5>
+                          {rolesList
+                            .filter((elem) => elem._id === projectOwner?.role)
+                            .map((e) => (
+                              <span key={uuid()}>{e.name}</span>
+                            ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -597,38 +599,40 @@ function Project() {
                     {prjMembers?.map((member) => {
                       if (!member.isOwner)
                         return (
-                          <div className="w-50 mt-2 d-flex" key={uuid()}>
-                            <div>
-                              <Image
-                                className="rounded-circle profile-img border border-secondary"
-                                src={member.avatar}
-                                alt="user pic"
-                              />
-                            </div>
-                            &nbsp;
-                            <div
-                              className="text-truncate"
-                              style={{ maxWidth: "35ch" }}
-                            >
-                              <h5>{member.name}</h5>
-                              {rolesList
-                                .filter((elem) => elem._id === member?.role)
-                                .map((e) => (
-                                  <span key={uuid()}>{e.name}</span>
-                                ))}
-                            </div>
-                            <div className="flex-grow-1 d-flex flex-row-reverse me-2 my-auto">
-                              <XCircleFill
-                                className="text-danger"
-                                size={24}
-                                style={{ cursor: "pointer" }}
-                                onClick={() => {
-                                  unassignUserFromProject({
-                                    projectId: pathId,
-                                    memberEmail: member.email,
-                                  });
-                                }}
-                              />
+                          <div className="w-50 mt-2 " key={uuid()}>
+                            <div className="d-flex p-2 border rounded shadow-sm">
+                              <div>
+                                <Image
+                                  className="rounded-circle profile-img border border-secondary"
+                                  src={member.avatar}
+                                  alt="user pic"
+                                />
+                              </div>
+                              &nbsp;
+                              <div
+                                className="text-truncate"
+                                style={{ maxWidth: "35ch" }}
+                              >
+                                <h5>{member.name}</h5>
+                                {rolesList
+                                  .filter((elem) => elem._id === member?.role)
+                                  .map((e) => (
+                                    <span key={uuid()}>{e.name}</span>
+                                  ))}
+                              </div>
+                              <div className="flex-grow-1 d-flex flex-row-reverse me-2 my-auto">
+                                <XCircleFill
+                                  className="text-danger"
+                                  size={24}
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    unassignUserFromProject({
+                                      projectId: pathId,
+                                      memberEmail: member.email,
+                                    });
+                                  }}
+                                />
+                              </div>
                             </div>
                           </div>
                         );
