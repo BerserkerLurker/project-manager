@@ -14,12 +14,22 @@ import Project from "../pages/dashboard/Project";
 import NewProject from "../pages/dashboard/NewProject";
 import Tasks from "../pages/dashboard/Tasks";
 import Teams from "../pages/dashboard/Teams";
+import { default as socket } from "../api/socket/socket";
 
 function AuthenticatedRoute() {
   const navigate = useNavigate();
   const location = useLocation();
   // @ts-ignore
-  const { user } = useAuth();
+  const { user, token } = useAuth();
+
+  useEffect(() => {
+    if (token) {
+      globalThis.socket = socket(user);
+    }
+    if (globalThis.socket) {
+      globalThis.socket.connect();
+    }
+  }, [token]);
 
   useEffect(() => {
     if (!user) {

@@ -62,6 +62,7 @@ export function AuthProvider(children) {
     authApi.logout().then(() => {
       setUser(undefined);
       localStorage.removeItem("userProfile");
+      globalThis.socket.emit("end");
       setToken("");
       navigate("login", { replace: true });
     });
