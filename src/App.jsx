@@ -4,6 +4,7 @@ import Footer from "./components/Footer";
 import Router from "./components/Router";
 import { BrowserRouter } from "react-router-dom";
 import "./assets/styles/scss/App.scss";
+import "react-chat-elements/dist/main.css";
 import { AuthProvider } from "./hooks/useAuth";
 function App() {
   return (
