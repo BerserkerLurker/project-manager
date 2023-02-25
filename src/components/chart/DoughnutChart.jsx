@@ -9,7 +9,6 @@ import { Doughnut } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 export default function DoughnutChart({ completed, incomplete, overdue, total }) {
-  console.log(completed);
   const data = {
     labels: ["Completed", "Incomplete"],
     datasets: [

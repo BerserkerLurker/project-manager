@@ -507,7 +507,16 @@ export function ApiProvider(children) {
       assignUserToTask,
       unassignUserFromTask,
     }),
-    [projectsList, tasksList, projectsMembersObj, teamsList, loading, error]
+    [
+      projectsList,
+      tasksList,
+      projectsMembersObj,
+      userTeams,
+      rolesList,
+      teamsList,
+      loading,
+      error,
+    ]
   );
   return (
     <ApiContext.Provider value={memoedValue}>

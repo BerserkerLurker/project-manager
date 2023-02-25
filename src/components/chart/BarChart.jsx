@@ -21,7 +21,6 @@ ChartJS.register(
 );
 
 export default function BarChart({ tasks, members }) {
-  console.log(members);
   const options = {
     responsive: true,
     plugins: {
@@ -40,7 +39,6 @@ export default function BarChart({ tasks, members }) {
     });
     return { ...member, taskCount: count };
   });
-  console.log(prjMem);
 
   const labels = prjMem.map((member) => member.name);
   const dataset = prjMem.map((member) => member.taskCount);

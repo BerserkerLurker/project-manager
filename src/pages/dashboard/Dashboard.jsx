@@ -41,11 +41,21 @@ function Dashboard() {
   return (
     <Container fluid>
       <div className="row row-cols-3 row-cols-lg-4 h-100">
-        <div className="col bg-light">
+        <div
+          className="col bg-light"
+          style={{
+            boxShadow: "0px 0px 10px 0px rgba(51, 51, 51, 0.2 )",
+          }}
+        >
           <SideNav />
         </div>
 
-        <div className="col-2 col-lg-3 flex-grow-1">
+        <div
+          className="col-2 col-lg-3 flex-grow-1"
+          style={{
+            boxShadow: "inset rgb(51 51 51 / 20%) -10px 15px 10px -15px",
+          }}
+        >
           <nav aria-label="breadcrumb">
             <ol className="breadcrumb  text-capitalize">
               <li
