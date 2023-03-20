@@ -54,17 +54,19 @@ export function ApiProvider(children) {
           setProjectsMembersObj(projectsMembers);
 
           const tasks = await tasksApi.getAllTasks();
-          const ids = tasks.map((task) => task.taskId);
-          const taskAssignees = await tasksApi.getTaskAssignees(ids);
           let updatedList = [...tasks];
-          taskAssignees.forEach((elem) => {
-            let taskId = Object.keys(elem)[0];
-            let index = tasks.findIndex((task) => task.taskId === taskId);
-            updatedList[index] = {
-              ...updatedList[index],
-              assignees: Object.values(elem)[0],
-            };
-          });
+          const ids = tasks.map((task) => task.taskId);
+          if (ids.length) {
+            const taskAssignees = await tasksApi.getTaskAssignees(ids);
+            taskAssignees.forEach((elem) => {
+              let taskId = Object.keys(elem)[0];
+              let index = tasks.findIndex((task) => task.taskId === taskId);
+              updatedList[index] = {
+                ...updatedList[index],
+                assignees: Object.values(elem)[0],
+              };
+            });
+          }
           setTasksList(updatedList);
 
           const roles = await rolesApi.getAllRoles();
