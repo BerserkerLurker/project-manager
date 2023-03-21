@@ -91,16 +91,18 @@ export function ApiProvider(children) {
     if (teamsList) {
       teams = teamsList
         .map((team) => {
-          if (
-            team.members.filter((member) => member.memberId._id === user.userId)
-              .length > 0
-          ) {
+          let filtered = team.members.filter(
+            (member) =>
+              member.memberId._id === user.userId &&
+              member.status !== "notMember"
+          );
+          if (filtered.length > 0) {
             return team;
           }
         })
         .filter((team) => team !== undefined);
     }
-    setUserTeams(teams);
+    setUserTeams([...teams]);
   }, [teamsList]);
 
   function getAllProjects() {
