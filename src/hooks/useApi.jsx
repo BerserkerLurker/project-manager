@@ -377,7 +377,7 @@ export function ApiProvider(children) {
     setLoading(true);
 
     return teamsApi
-      .updateTeamMember(params)
+      .removeTeamMember(params)
       .then((team) => {
         console.log("api res: " + JSON.stringify(team));
         //TODO - careful with deleted empty teams in future versions
