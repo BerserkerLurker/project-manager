@@ -19,6 +19,8 @@ import useApi from "../../hooks/useApi";
 import useAuth from "../../hooks/useAuth";
 
 function Messages() {
+  const divRef = useRef(null);
+
   let location = useLocation();
   const inputReferance = useRef();
   // @ts-ignore
@@ -124,6 +126,10 @@ function Messages() {
       }
     );
   }, [userTeams, msgs, location]);
+
+  useEffect(() => {
+    divRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [msgs]);
 
   // console.log(chatUsersList);
 
@@ -268,7 +274,9 @@ function Messages() {
             <div>
               {currentRoom !== undefined ? (
                 <>
-                  <span className="text-white">{currentRoom.chatRoomId}</span>
+                  <span ref={divRef} className="text-white">
+                    {currentRoom.chatRoomId}
+                  </span>
                   <button
                     className="ms-2"
                     onClick={() => {
