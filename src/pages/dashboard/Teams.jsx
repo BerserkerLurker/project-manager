@@ -28,7 +28,7 @@ function Teams() {
   const ref = useRef(null);
   const refNew = useRef(null);
   // @ts-ignore
-  const { teamsList, updateTeamMember, removeTeamMember } = useApi();
+  const { userTeams, updateTeamMember, removeTeamMember } = useApi();
   // @ts-ignore
   const { user } = useAuth();
 
@@ -40,21 +40,8 @@ function Teams() {
   //   console.log(teamsList);
 
   useEffect(() => {
-    let teams = [];
-    if (teamsList) {
-      teams = teamsList
-        .map((team) => {
-          if (
-            team.members.filter((member) => member.memberId._id === user.userId)
-              .length > 0
-          ) {
-            return team;
-          }
-        })
-        .filter((team) => team !== undefined);
-    }
-    setMyTeams(teams);
-  }, [teamsList]);
+    setMyTeams(userTeams);
+  }, [userTeams]);
 
   const ConfirmModal = () => {
     let color = "danger";
@@ -94,11 +81,18 @@ function Teams() {
           <Button
             variant={color}
             onClick={() => {
-              updateTeamMember({
-                teamId: confirmationModal.data.teamId,
-                updatedUserId: confirmationModal.data.updatedUserId,
-                newStatus: confirmationModal.data.newStatus,
-              });
+              if (confirmationModal.data.newStatus === "notMember") {
+                removeTeamMember({
+                  teamId: confirmationModal.data.teamId,
+                  removedUserId: confirmationModal.data.updatedUserId,
+                });
+              } else {
+                updateTeamMember({
+                  teamId: confirmationModal.data.teamId,
+                  updatedUserId: confirmationModal.data.updatedUserId,
+                  newStatus: confirmationModal.data.newStatus,
+                });
+              }
               setConfirmationModal({ ...confirmationModal, show: false });
             }}
           >
