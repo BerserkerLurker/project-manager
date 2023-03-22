@@ -4,6 +4,7 @@ export const pathSocket = "/chat/";
 export const loginUri = "/auth/login";
 export const signUpUri = "/auth/register";
 export const verifyUri = "/auth/verify";
+export const sendVerifyEmailUri = "/auth/sendverifyemail";
 export const refreshUri = "/auth/refresh";
 export const logoutUri = "/auth/logout";
 export const checkEmailUri = "/auth/checkemail";

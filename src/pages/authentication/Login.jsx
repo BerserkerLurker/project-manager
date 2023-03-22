@@ -1,8 +1,9 @@
 import { Formik } from "formik";
 import React, { useEffect } from "react";
 import { Button, Container, Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { sendVerifyEmail } from "../../api/auth";
 import useAuth from "../../hooks/useAuth";
 
 const passwordRegExp =
@@ -64,7 +65,6 @@ function Login() {
                   &nbsp;{touched.email && errors.email && errors.email}
                 </div>
               </Form.Group>
-
               <Form.Group controlId="formPassword">
                 <Form.Label>Password:</Form.Label>
                 <Form.Control
@@ -90,9 +90,23 @@ function Login() {
               >
                 Login
               </Button>
+              {/* // TODO - handle sendVerifyEmail response */}
               {error && !loading ? (
                 <span className="error-message">
-                  &nbsp; Incorrect email or password
+                  &nbsp;{" "}
+                  {error.response?.data?.msg.includes("verified") ? (
+                    <>
+                      Please verify your Email to gain access.&nbsp;
+                      <Link
+                        to={""}
+                        onClick={() => sendVerifyEmail({ email: values.email })}
+                      >
+                        Send me another verification Email.
+                      </Link>
+                    </>
+                  ) : (
+                    "Incorrect email or password"
+                  )}
                 </span>
               ) : (
                 ""

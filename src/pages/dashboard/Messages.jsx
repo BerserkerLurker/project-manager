@@ -222,7 +222,7 @@ function Messages() {
     }
   };
   return userTeams.length === 0 ? (
-    "empty"
+    <div>loading</div>
   ) : (
     <>
       <div

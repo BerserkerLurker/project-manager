@@ -3,6 +3,7 @@ import {
   checkEmailUri,
   loginUri,
   logoutUri,
+  sendVerifyEmailUri,
   signUpUri,
   updateUserUri,
   url,
@@ -49,6 +50,15 @@ export async function verify(params) {
     );
     // console.log(res.data);
     // throw new Error("lol");
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function sendVerifyEmail(params) {
+  try {
+    const res = await axios.post(url + sendVerifyEmailUri, { ...params });
     return res.data;
   } catch (error) {
     throw error;
