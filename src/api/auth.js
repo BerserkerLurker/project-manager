@@ -6,6 +6,7 @@ import {
   signUpUri,
   updateUserUri,
   url,
+  verifyUri,
 } from ".";
 import jwtInterceptor from "./helpers/jwtInterceptor";
 
@@ -31,6 +32,25 @@ export async function signUp(params) {
     return res.data.user;
   } catch (error) {
     console.log(error);
+    throw error;
+  }
+}
+
+export async function verify(params) {
+  // const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+  try {
+    // await delay(2000);
+    const res = await axios.get(
+      url + verifyUri + `/${params.userId}/${params.token}`,
+      {
+        withCredentials: true,
+      }
+    );
+    // console.log(res.data);
+    // throw new Error("lol");
+    return res.data;
+  } catch (error) {
     throw error;
   }
 }
