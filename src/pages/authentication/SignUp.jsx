@@ -1,7 +1,7 @@
 import { Formik } from "formik";
 import React, { useEffect, useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import useAuth from "../../hooks/useAuth";
 
@@ -26,6 +26,7 @@ function SignUp() {
   // @ts-ignore
   const { error, loading, signUp, user } = useAuth();
   const navigate = useNavigate();
+  const [msg, setMsg] = useState("");
   useEffect(() => {
     if (user) {
       navigate("/", { replace: true });
@@ -42,11 +43,20 @@ function SignUp() {
           validationSchema={validationSchema}
           // validator={() => ({})} // Validate all for testing
           onSubmit={(values, { setSubmitting, resetForm }) => {
-            signUp(values.email, values.name, values.password);
-
-            if (error.response.status === 400) {
-              setErrMsg("This email is already used.");
-            }
+            signUp(values.email, values.name, values.password)
+              .then((res) => {
+                console.log(res.msg);
+                setMsg(res.msg);
+              })
+              .catch((err) => {
+                if (err?.response?.status === 400) {
+                  if (err.response.data.msg.includes("Duplicate")) {
+                    setErrMsg("This email is already used.");
+                  } else {
+                    setErrMsg(err.response.data.msg);
+                  }
+                }
+              });
           }}
         >
           {({
@@ -117,13 +127,27 @@ function SignUp() {
                 Signup
               </Button>
               {error && !loading ? (
-                <span className="error-message">&nbsp; {errMsg}</span>
+                <span className="error-message">
+                  &nbsp;{" "}
+                  {errMsg.includes("used") ? (
+                    <>
+                      {errMsg}&nbsp;Try to&nbsp;
+                      <Link to={"login"} onClick={() => console.log("sent")}>
+                        Login
+                      </Link>
+                      .
+                    </>
+                  ) : (
+                    errMsg + "."
+                  )}
+                </span>
               ) : (
                 ""
               )}
             </Form>
           )}
         </Formik>
+        <p className="text-center text-success mt-2">{msg}</p>
       </Container>
     </div>
   );

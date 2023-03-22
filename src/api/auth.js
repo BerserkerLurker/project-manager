@@ -29,7 +29,7 @@ export async function signUp(params) {
       withCredentials: true,
     });
     globalThis.targetProxy.accessToken = res.data.accessToken;
-    return res.data.user;
+    return res.data;
   } catch (error) {
     console.log(error);
     throw error;

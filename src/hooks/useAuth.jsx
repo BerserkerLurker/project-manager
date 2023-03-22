@@ -56,15 +56,19 @@ export function AuthProvider(children) {
   function signUp(email, name, password) {
     setLoading(true);
 
-    authApi
+    return authApi
       .signUp({ email, name, password })
       .then((user) => {
-        localStorage.setItem("userProfile", JSON.stringify(user));
-        setUser(user);
-        setToken(globalThis.targetProxy.accessToken);
-        navigate("/", { replace: true });
+        // localStorage.setItem("userProfile", JSON.stringify(user));
+        // setUser(user);
+        // setToken(globalThis.targetProxy.accessToken);
+        // navigate("/", { replace: true });
+        return user;
       })
-      .catch((error) => setError(error))
+      .catch((error) => {
+        setError(error);
+        throw error;
+      })
       .finally(() => setLoading(false));
   }
 
