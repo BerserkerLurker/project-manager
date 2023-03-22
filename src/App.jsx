@@ -2,20 +2,29 @@ import React from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Router from "./components/Router";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./assets/styles/scss/App.scss";
 import "react-chat-elements/dist/main.css";
 import { AuthProvider } from "./hooks/useAuth";
+import VerifyEmail from "./pages/authentication/VerifyEmail";
 function App() {
   return (
     <BrowserRouter>
-      <div className="d-flex flex-column min-vh-100">
-        <AuthProvider>
-          <Header />
-          <Router />
-        </AuthProvider>
-        <Footer />
-      </div>
+      <Routes>
+        <Route path="/verify/:userId/:token" element={<VerifyEmail />} />
+        <Route
+          path="*"
+          element={
+            <div className="d-flex flex-column min-vh-100">
+              <AuthProvider>
+                <Header />
+                <Router />
+              </AuthProvider>
+              <Footer />
+            </div>
+          }
+        />
+      </Routes>
     </BrowserRouter>
   );
 }

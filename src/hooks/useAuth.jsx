@@ -20,8 +20,18 @@ export function AuthProvider(children) {
 
   useEffect(() => {
     const savedProfile = localStorage.getItem("userProfile");
-    if (savedProfile !== "undefined") {
+    if (savedProfile !== "undefined" && savedProfile !== null) {
       setUser(JSON.parse(savedProfile));
+    } else if (location.state?.data !== undefined) {
+      const verifyEmailResult = location.state?.data;
+      localStorage.setItem(
+        "userProfile",
+        JSON.stringify(verifyEmailResult.user)
+      );
+      setUser(verifyEmailResult.user);
+      globalThis.targetProxy.accessToken = verifyEmailResult.accessToken;
+      setToken(globalThis.targetProxy.accessToken);
+      navigate("/", { replace: true });
     } else {
       navigate("login", { replace: true });
     }
@@ -89,7 +99,7 @@ export function AuthProvider(children) {
 
   globalThis.targetProxy = new Proxy(globalThis.accessToken, {
     set: function (target, key, value) {
-      if (!target.token) {
+      if (!target.accessToken) {
         // console.log(`${key.toString()} set to ${value}`);
         target[key] = value;
         setToken(value);
@@ -97,8 +107,8 @@ export function AuthProvider(children) {
       return true;
     },
     get: function (target, prop, receiver) {
-      if (prop === "token") {
-        return target.token;
+      if (prop === "accessToken") {
+        return target.accessToken;
       }
       // @ts-ignore
       return Reflect.get(...arguments);
