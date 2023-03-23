@@ -7,11 +7,13 @@ import "./assets/styles/scss/App.scss";
 import "react-chat-elements/dist/main.css";
 import { AuthProvider } from "./hooks/useAuth";
 import VerifyEmail from "./pages/authentication/VerifyEmail";
+import ResetPassword from "./pages/authentication/ResetPassword";
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/verify/:userId/:token" element={<VerifyEmail />} />
+        <Route path="/resetpassword/:userId" element={<ResetPassword />} />
         <Route
           path="*"
           element={

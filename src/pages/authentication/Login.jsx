@@ -1,13 +1,13 @@
 import { Formik } from "formik";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { sendVerifyEmail } from "../../api/auth";
+import { forgotpassword, sendVerifyEmail } from "../../api/auth";
 import useAuth from "../../hooks/useAuth";
 
 const passwordRegExp =
-  /^((?=.*[\d])(?=.*[a-z])(?=.*[A-Z])|(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d\s])|(?=.*[\d])(?=.*[A-Z])(?=.*[^\w\d\s])|(?=.*[\d])(?=.*[a-z])(?=.*[^\w\d\s])|(?=.*[\d])(?=.*[a-z])|(?=.*[\d])(?=.*[A-Z])).{6,30}$/;
+  /^((?=.*[\d])(?=.*[a-z])(?=.*[A-Z])|(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d\s])|(?=.*[\d])(?=.*[A-Z])(?=.*[^\w\d\s])|(?=.*[\d])(?=.*[a-z])(?=.*[^\w\d\s])|(?=.*[\d])(?=.*[a-z])|(?=.*[\d])(?=.*[A-Z])).{6,40}$/;
 
 const validationSchema = Yup.object().shape({
   email: Yup.string()
@@ -22,6 +22,7 @@ const validationSchema = Yup.object().shape({
 function Login() {
   // @ts-ignore
   const { error, loading, login, user } = useAuth();
+  const [resetMsg, setResetMsg] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
     if (user) {
@@ -37,6 +38,7 @@ function Login() {
           validationSchema={validationSchema}
           // validator={() => ({})} // Validate all for testing
           onSubmit={(values, { setSubmitting, resetForm }) => {
+            setResetMsg('')
             login(values.email, values.password);
           }}
         >
@@ -104,8 +106,25 @@ function Login() {
                         Send me another verification Email.
                       </Link>
                     </>
+                  ) : resetMsg === "" ? (
+                    <>
+                      Incorrect email or password.&nbsp;
+                      <Link
+                        to={""}
+                        onClick={() =>
+                          forgotpassword({ email: values.email }).then(
+                            (res) => {
+                              console.log(res.msg);
+                              setResetMsg(res.msg);
+                            }
+                          )
+                        }
+                      >
+                        I forgot my password, reset it.
+                      </Link>
+                    </>
                   ) : (
-                    "Incorrect email or password"
+                    <span className="text-success">{resetMsg}</span>
                   )}
                 </span>
               ) : (

@@ -1,8 +1,10 @@
 import axios from "axios";
 import {
   checkEmailUri,
+  forgotPasswordUri,
   loginUri,
   logoutUri,
+  resetPasswordUri,
   sendVerifyEmailUri,
   signUpUri,
   updateUserUri,
@@ -59,6 +61,24 @@ export async function verify(params) {
 export async function sendVerifyEmail(params) {
   try {
     const res = await axios.post(url + sendVerifyEmailUri, { ...params });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function forgotpassword(params) {
+  try {
+    const res = await axios.post(url + forgotPasswordUri, { ...params });
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function resetPassword(params) {
+  try {
+    const res = await axios.get(url + resetPasswordUri + `/${params.userId}`);
     return res.data;
   } catch (error) {
     throw error;

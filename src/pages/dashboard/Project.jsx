@@ -295,12 +295,12 @@ function Project() {
     updateTask({ id: taskId, isDone: isdone }).then(() => {
       const noti = () =>
         (toastId.current = toast.info(
-          `${taskName} ${!isdone ? "done ✔" : "updated"}`,
+          `${taskName} ${isdone ? "done ✔" : "updated"}`,
           { toastId: taskId, autoClose: 2000 }
         ));
       if (toastId.current === taskId && toast.isActive(toastId.current)) {
         toast.update(toastId.current, {
-          render: `${taskName} ${!isdone ? "done ✔" : "updated"}`,
+          render: `${taskName} ${isdone ? "done ✔" : "updated"}`,
         });
       } else {
         noti();
