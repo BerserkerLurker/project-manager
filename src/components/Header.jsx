@@ -128,7 +128,7 @@ function Header() {
   //TODO - Search bar when logged in
   return (
     <header
-      className="sticky-lg-top bg-light h-auto"
+      className="bg-light h-auto"
       style={{ height: "100px" }}
     >
       <Navbar collapseOnSelect={true} bg="light" expand="lg">
